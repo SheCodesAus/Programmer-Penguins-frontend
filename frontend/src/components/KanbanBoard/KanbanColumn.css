@@ -1,0 +1,83 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   KanbanColumn.css
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.kanban-column {
+  flex: 0 0 240px; /* fixed width; won't grow or shrink */
+  background: #f1f5f9; /* light grey — matches Figma column bg */
+  border-radius: 14px;
+  padding: 16px 12px;
+  border: 2px solid transparent;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Highlight when a card is dragged over this column */
+.kanban-column--drag-over {
+  border-color: #93c5fd;
+  background: #eff6ff;
+}
+
+/* ── Header ── */
+.kanban-column__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.kanban-column__label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.kanban-column__add {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 20px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding-bottom: 2px; /* optical centering of "+" */
+}
+
+.kanban-column__add:hover {
+  background: #1d4ed8;
+  color: #ffffff;
+}
+
+/* ── Cards container ── */
+.kanban-column__cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  min-height: 60px; /* keep column droppable even when empty */
+}
+
+/* ── Empty state ── */
+.kanban-column__empty {
+  font-size: 12px;
+  color: #cbd5e1;
+  text-align: center;
+  padding: 20px 0;
+  font-style: italic;
+}

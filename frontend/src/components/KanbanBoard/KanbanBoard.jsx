@@ -1,0 +1,59 @@
+import { useState } from "react";
+import useKanban, { COLUMNS, COLUMN_ACCENT } from "../../hooks/useKanban";
+import KanbanColumn from "./KanbanColumn";
+import NewApplicationModal from "./NewApplicationModal";
+import "./KanbanBoard.css";
+
+export default function KanbanBoard() {
+  const {
+    grouped,
+    loading,
+    error,
+    handleDragStart,
+    handleDrop,
+    createCard,
+    reload,
+  } = useKanban();
+
+  const [addingToColumn, setAddingToColumn] = useState(null);
+
+  if (loading) {
+    return (
+      <div className="kanban-board__loading">Loading your applications…</div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="kanban-board__error">
+        <p>Something went wrong: {error}</p>
+        <button onClick={reload}>Try again</button>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="kanban-board">
+        {COLUMNS.map((col) => (
+          <KanbanColumn
+            key={col.id}
+            column={col}
+            cards={grouped[col.id] || []}
+            accentColor={COLUMN_ACCENT[col.id]}
+            onDragStart={handleDragStart}
+            onDrop={handleDrop}
+            onAddClick={(columnId) => setAddingToColumn(columnId)}
+          />
+        ))}
+      </div>
+
+      <NewApplicationModal
+        isOpen={addingToColumn !== null}
+        defaultStatus={addingToColumn}
+        onClose={() => setAddingToColumn(null)}
+        onCreate={createCard}
+      />
+    </>
+  );
+}
