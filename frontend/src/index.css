@@ -3,7 +3,7 @@
 :root {
   --primary: #1671ee;
   --secondary: #eefaff;
-  --hoverbutton: #7293bc;
+  --hoverbutton: #ffbd59;
   --cardbackground: #ffffff;
   --background: #ffffff;
   --text: #222222;
@@ -38,4 +38,18 @@ h6 {
 
 .primary-btn:hover {
   background-color: var(--hoverbutton);
+}
+
+.secondary-btn {
+  background-color: #e2e2e2;
+  color: var(--text);
+  cursor: pointer;
+  padding: 14px 28px;
+  font-size: 1rem;
+  border-radius: 999px;
+  border: none;
+}
+
+.secondary-btn:hover {
+  background-color: #b4b4b4;
 }

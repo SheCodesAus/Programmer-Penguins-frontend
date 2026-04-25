@@ -3,7 +3,7 @@ import "./NavBar.css";
 import logo from "../assets/logo.png";
 
 function NavBar() {
-
+    const navigate = useNavigate();
     return (
             <div id="navbar"> 
                 <nav>
@@ -13,9 +13,12 @@ function NavBar() {
                         </NavLink>
                         <NavLink to="About">About</NavLink>
                         <NavLink to="Contact">Contact</NavLink>
+                        <NavLink to="JobApplicationPage">Job Application</NavLink>
                     </div>
                     <div className="nav-right">
-                        <NavLink to="Login">Login</NavLink>
+                        <button className="primary-btn" onClick={() => navigate("/login")}>
+                            Login
+                        </button>
                     </div>
                 </nav>
                 <Outlet />

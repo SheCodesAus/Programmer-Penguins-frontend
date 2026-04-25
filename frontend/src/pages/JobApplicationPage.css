@@ -1,0 +1,54 @@
+.top-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin: 50px 80px 20px 80px;
+}
+
+.progressbar {
+  height: 60px;
+  display: block;
+  margin: 0 auto;
+}
+
+.job-description {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 40px;
+  max-width: 1000px;
+  margin: 40px auto;
+}
+
+.company-logo {
+  grid-column-start: 1;
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  display: flex;
+  justify-self: end;
+}
+
+.job-details {
+  display: grid;
+  grid-template-columns: 150px auto;
+}
+
+.job-details h4 {
+  margin: 5px;
+}
+
+.source-btn {
+  background-color: var(--primary);
+  color: white;
+  cursor: pointer;
+  padding: 14px 28px;
+  font-size: 1rem;
+  border-radius: 999px;
+  border: none;
+  grid-column: 1 / -1;
+  justify-self: center;
+  margin: 30px 0;
+}
+
+.source-btn:hover {
+  background-color: var(--hoverbutton);
+}

@@ -5,6 +5,7 @@ import './index.css'
 
 //import our pages
 import HomePage from "./pages/HomePage.jsx";
+import JobApplicationPage from "./pages/JobApplicationPage.jsx";
 
 //import our components
 import NavBar from "./components/NavBar.jsx";
@@ -15,6 +16,7 @@ const router = createBrowserRouter([
     element: <NavBar />,
     children: [
       { path: "/", element: <HomePage />},
+      { path: "JobApplicationPage", element: <JobApplicationPage />},
     ]
   }
 ])

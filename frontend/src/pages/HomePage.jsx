@@ -7,6 +7,7 @@ import cardimage2 from "../assets/cardimage2.png";
 import cardimage3 from "../assets/cardimage3.png";
 
 function HomePage() {
+    const navigate = useNavigate();
 
     const Banner = () => {
         return (
@@ -31,7 +32,6 @@ function HomePage() {
         const [ref, inView] = useInView();
         return (
             <div ref={ref} className={`description-container fade-in ${inView ? "visible" : ""}`}>
-            <div className="description-container">
                 <div className="card">
                     <img src={cardimage} alt="Description Image" className="card-image" />
                         <h2 className="card-title">Track Every Application</h2>
@@ -53,7 +53,6 @@ function HomePage() {
                     Take the guesswork out of job hunting. Stay focused, reduce overwhelm, and approach your applications with clarity.
                     </p>
                 </div>
-            </div>
             </div>
         );
     };
