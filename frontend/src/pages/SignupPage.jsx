@@ -1,15 +1,18 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
-import { loginUser, loginWithGoogle } from "../api/auth";
+import { signupUser, loginWithGoogle } from "../api/auth";
 import googleLogo from "../assets/GoogleButton.svg";
 import "./LoginPage.css";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const navigate = useNavigate();
 
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [password1, setPassword1] = useState("");
+  const [password2, setPassword2] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -20,7 +23,6 @@ export default function LoginPage() {
 
       try {
         const data = await loginWithGoogle(tokenResponse.access_token);
-
         localStorage.setItem("token", data.key);
         navigate("/dashboard");
       } catch (error) {
@@ -30,19 +32,35 @@ export default function LoginPage() {
       }
     },
     onError: () => {
-      setErrorMessage("Google login failed.");
+      setErrorMessage("Google sign up failed.");
     },
   });
 
-  async function handleLogin(event) {
+  async function handleSignup(event) {
     event.preventDefault();
     setErrorMessage("");
+
+    if (password1 !== password2) {
+      setErrorMessage("Passwords do not match.");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const data = await loginUser({ email, password });
+      const data = await signupUser({
+        username: email,
+        email,
+        password1,
+        password2,
+        first_name: firstName,
+        last_name: lastName,
+      });
 
-      localStorage.setItem("token", data.key);
+      if (data.key) {
+        localStorage.setItem("token", data.key);
+      }
+
       navigate("/dashboard");
     } catch (error) {
       setErrorMessage(error.message);
@@ -51,22 +69,18 @@ export default function LoginPage() {
     }
   }
 
-  function handleGoogleLogin() {
-    googleLogin();
-  }
-
   return (
     <main className="login-page">
       <h1 className="login-logo">
         JOB<span>BUDDY</span>
       </h1>
 
-      <section className="login-card">
+      <section className="login-card signup-card">
         <div className="auth-tabs">
-          <Link className="auth-tab active" to="/login">
+          <Link className="auth-tab" to="/login">
             Login
           </Link>
-          <Link className="auth-tab" to="/signup">
+          <Link className="auth-tab active" to="/signup">
             Sign Up
           </Link>
         </div>
@@ -74,7 +88,7 @@ export default function LoginPage() {
         <button
           className="google-btn"
           type="button"
-          onClick={handleGoogleLogin}
+          onClick={() => googleLogin()}
           disabled={isLoading}
         >
           <img src={googleLogo} alt="" className="google-icon" />
@@ -85,7 +99,25 @@ export default function LoginPage() {
           <span>OR</span>
         </div>
 
-        <form className="auth-form" onSubmit={handleLogin}>
+        <form className="auth-form" onSubmit={handleSignup}>
+          <label>First Name</label>
+          <input
+            type="text"
+            placeholder="First Name"
+            value={firstName}
+            onChange={(event) => setFirstName(event.target.value)}
+            required
+          />
+
+          <label>Last Name</label>
+          <input
+            type="text"
+            placeholder="Last Name"
+            value={lastName}
+            onChange={(event) => setLastName(event.target.value)}
+            required
+          />
+
           <label>Email</label>
           <input
             type="email"
@@ -98,15 +130,20 @@ export default function LoginPage() {
           <label>Password</label>
           <input
             type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
+            placeholder="Enter a Password"
+            value={password1}
+            onChange={(event) => setPassword1(event.target.value)}
             required
           />
 
-          <Link className="forgot-link" to="/forgot-password">
-            Forgot Password
-          </Link>
+          <label>Confirm Password</label>
+          <input
+            type="password"
+            placeholder="Retype Password"
+            value={password2}
+            onChange={(event) => setPassword2(event.target.value)}
+            required
+          />
 
           {errorMessage && <p className="auth-error">{errorMessage}</p>}
 
@@ -115,7 +152,7 @@ export default function LoginPage() {
             type="submit"
             disabled={isLoading}
           >
-            {isLoading ? "Logging in..." : "Login"}
+            {isLoading ? "Creating account..." : "Sign Up"}
           </button>
         </form>
       </section>
