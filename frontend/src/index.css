@@ -53,3 +53,11 @@ h6 {
 .secondary-btn:hover {
   background-color: #b4b4b4;
 }
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
