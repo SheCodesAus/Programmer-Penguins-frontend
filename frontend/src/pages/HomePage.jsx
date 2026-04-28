@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useInView } from "../hooks/useInView";
 import "./HomePage.css";
-import bannerimage from "../assets/bannerimage.svg";
+import bannerimage from "../assets/kanbanimage.svg";
 import cardimage from "../assets/cardimage.png";
 import cardimage2 from "../assets/cardimage2.png";
 import cardimage3 from "../assets/cardimage3.png";
@@ -14,15 +14,15 @@ function HomePage() {
             <div className="banner-container">
                 <div className="banner-content">
                     <h1>
-                    Your new <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>best friend</span> 
-                    <br></br>for<span style={{ fontWeight: 'bold' }}> job applications.</span>
+                    From <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>application</span> to <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>offer</span>
+                    <br></br> - all in<span style={{ fontWeight: 'bold' }}> one place.</span>
                     </h1>
                     <button className="primary-btn" onClick={() => navigate("/login")}>
                         Start tracking
                     </button>
                 </div>
                 <div>
-                    <img src={bannerimage} className="banner-image" alt="Example of Job Buddy App" />
+                    <img src={bannerimage} className="banner-image" alt="Example of Job Tracker App" />
                 </div>
             </div>
         );

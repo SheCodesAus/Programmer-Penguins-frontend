@@ -4,9 +4,12 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { loginUser, loginWithGoogle } from "../api/auth";
 import googleLogo from "../assets/GoogleButton.svg";
 import "./LoginPage.css";
+import logo from "../assets/logo.png";
+import useAuth from "../hooks/use-auth.js";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { setAuth } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -43,6 +46,7 @@ export default function LoginPage() {
       const data = await loginUser({ email, password });
 
       localStorage.setItem("token", data.key);
+      setAuth({ token: data.key, userId: data.userId ?? null });
       navigate("/dashboard");
     } catch (error) {
       setErrorMessage(error.message);
@@ -57,9 +61,7 @@ export default function LoginPage() {
 
   return (
     <main className="login-page">
-      <h1 className="login-logo">
-        JOB<span>BUDDY</span>
-      </h1>
+        <img src={logo} className="logo" alt="Job Buddy logo" />
 
       <section className="login-card">
         <div className="auth-tabs">
