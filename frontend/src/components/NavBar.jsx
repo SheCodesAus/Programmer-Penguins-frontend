@@ -36,7 +36,7 @@ function NavBar() {
             <NavLink to={`/profile/${auth.userId}`}>My profile</NavLink>
           )}
           {auth.token ? (
-            <button className="link-btn" onClick={handleLogout}>Log Out</button>
+            <button className="logout-btn" onClick={handleLogout}>Log Out</button>
           ) : (
           <button className="primary-btn" onClick={() => navigate("/login")}>
             Login

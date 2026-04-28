@@ -157,7 +157,7 @@
 .forgot-link {
   display: block;
   width: max-content;
-  margin: -2px 0 22px 0;
+  margin: -2px 0 16px 0;
   padding: 0;
   font-size: 0.85rem;
   color: var(--primary) !important;
@@ -175,6 +175,7 @@
   border-radius: 10px;
   font-size: 1rem;
   padding: 14px;
+  margin: 10px 0 0 0;
 }
 
 .auth-error {

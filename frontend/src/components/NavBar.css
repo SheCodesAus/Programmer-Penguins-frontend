@@ -4,10 +4,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 10px;
 }
 
 .logo {
-  height: 8vh;
+  height: 6vh;
 }
 
 #navbar .nav-link {
@@ -31,6 +32,18 @@
   display: flex;
   justify-content: flex-end;
 }
+
+.logout-btn {
+  background-color: #e2e2e2;
+  color: var(--text);
+  cursor: pointer;
+  padding: 14px 28px;
+  font-size: 1rem;
+  border-radius: 999px;
+  border: none;
+}
+
+
 
 .hamburger {
   display: none;

@@ -22,7 +22,7 @@ function HomePage() {
                     </button>
                 </div>
                 <div>
-                    <img src={bannerimage} className="banner-image" alt="Example of Job Buddy App" />
+                    <img src={bannerimage} className="banner-image" alt="Example of Job Tracker App" />
                 </div>
             </div>
         );
