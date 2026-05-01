@@ -56,3 +56,32 @@ h1 {
   height: 80px;
   margin-bottom: 16px;
 }
+
+@media (max-width: 768px) {
+  .banner-container {
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
+    padding: 48px 24px;
+    text-align: left;
+    overflow: hidden;
+  }
+
+  .banner-content {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .banner-content h1 {
+    font-size: 2.4rem;
+    line-height: 1.15;
+  }
+
+  .banner-image {
+    display: none;
+  }
+
+  .primary-btn {
+    margin-top: 24px;
+  }
+}
