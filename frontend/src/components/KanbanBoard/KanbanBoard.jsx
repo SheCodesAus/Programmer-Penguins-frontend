@@ -2,20 +2,49 @@ import { useState } from "react";
 import useKanban, { COLUMNS, COLUMN_ACCENT } from "../../hooks/useKanban";
 import KanbanColumn from "./KanbanColumn";
 import NewApplicationModal from "./NewApplicationModal";
+import MotivationToast from "../MotivationToast";
+import { getMotivationMessage } from "../../utils/motivationMessages";
 import "./KanbanBoard.css";
 
 export default function KanbanBoard() {
+  const isLoggedIn = !!localStorage.getItem("token");
+
   const {
     grouped,
     loading,
     error,
     handleDragStart,
     handleDrop,
+    changeCardStatus,
     createCard,
     reload,
   } = useKanban();
 
+  const [toastMessage, setToastMessage] = useState("");
   const [addingToColumn, setAddingToColumn] = useState(null);
+
+  async function handleCreateCard(formData) {
+    const newCard = await createCard(formData);
+
+    setToastMessage(
+      getMotivationMessage({
+        action: "created",
+        toStatus: newCard.status,
+      })
+    );
+
+    return newCard;
+  }
+
+  async function handleStatusChange(cardId, newStatus) {
+    await changeCardStatus(cardId, newStatus);
+
+    setToastMessage(
+      getMotivationMessage({
+        toStatus: newStatus,
+      })
+    );
+  }
 
   if (loading) {
     return (
@@ -44,6 +73,8 @@ export default function KanbanBoard() {
             onDragStart={handleDragStart}
             onDrop={handleDrop}
             onAddClick={(columnId) => setAddingToColumn(columnId)}
+            isLoggedIn={isLoggedIn}
+            onStatusChange={handleStatusChange}
           />
         ))}
       </div>
@@ -52,7 +83,12 @@ export default function KanbanBoard() {
         isOpen={addingToColumn !== null}
         defaultStatus={addingToColumn}
         onClose={() => setAddingToColumn(null)}
-        onCreate={createCard}
+        onCreate={handleCreateCard}
+      />
+
+      <MotivationToast
+        message={toastMessage}
+        onClose={() => setToastMessage("")}
       />
     </>
   );
