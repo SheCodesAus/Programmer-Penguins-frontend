@@ -18,6 +18,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./KanbanCard.css";
 
 // Derive a favicon URL from a company name.
@@ -48,6 +49,7 @@ export default function KanbanCard({
   onDragStart,
   columnId,
 }) {
+  const navigate = useNavigate();
   const [isDragging, setIsDragging] = useState(false);
   const [imgError, setImgError] = useState(false);
   // `starred` is local UI state only — wire this to an API field if needed later
@@ -71,6 +73,10 @@ export default function KanbanCard({
       .join("")
       .toUpperCase() || "?";
 
+  function handleClick() {
+  navigate(`/job-application/${application.id}`);
+  }
+
   return (
     <div
       className={`kanban-card ${isDragging ? "kanban-card--dragging" : ""}`}
@@ -78,6 +84,7 @@ export default function KanbanCard({
       draggable
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
+      onClick={handleClick}
     >
       {/* Left accent border — colour comes from CSS variable --accent */}
       <div className="kanban-card__accent" />

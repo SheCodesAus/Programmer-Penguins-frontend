@@ -58,7 +58,7 @@ export default function LoginPage() {
   return (
     <main className="login-page">
       <h1 className="login-logo">
-        JOB<span>BUDDY</span>
+        Job<span>Tracker</span>
       </h1>
 
       <section className="login-card">

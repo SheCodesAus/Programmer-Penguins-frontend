@@ -9,7 +9,7 @@ function JobApplicationPage() {
     return (
         <div className="page-container">
             <div className="top-buttons">
-                <button className="secondary-btn" onClick={() => navigate("/")}>
+                <button className="secondary-btn" onClick={() => navigate("/dashboard")}>
                     ◀   Return to dashboard
                 </button>
                 <button className="secondary-btn" onClick={() => navigate("/")}>

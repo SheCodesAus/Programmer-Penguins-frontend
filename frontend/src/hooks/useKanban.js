@@ -45,7 +45,15 @@ export default function useKanban() {
 
       const normalised = {};
       COLUMNS.forEach((col) => {
-        normalised[col.id] = data[col.id] || [];
+        normalised[col.id] = [];
+      });
+
+      data.forEach((application) => {
+        const status = application.status;
+
+        if (normalised[status]) {
+          normalised[status].push(application);
+        }
       });
       setGrouped(normalised);
     } catch (err) {

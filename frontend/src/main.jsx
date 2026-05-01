@@ -44,7 +44,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "job-application",
+        path: "job-application/:id",
         element: (
           <ProtectedRoute>
             <JobApplicationPage />
