@@ -4,6 +4,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { signupUser, loginWithGoogle } from "../api/auth";
 import googleLogo from "../assets/GoogleButton.svg";
 import "./LoginPage.css";
+import logo from "../assets/logo.png";
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -71,9 +72,13 @@ export default function SignupPage() {
 
   return (
     <main className="login-page">
+<<<<<<< HEAD
       <h1 className="login-logo">
         Job<span>Tracker</span>
       </h1>
+=======
+    <img src={logo} className="logo" alt="Job Buddy logo" />
+>>>>>>> main
 
       <section className="login-card signup-card">
         <div className="auth-tabs">
