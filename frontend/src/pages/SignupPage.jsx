@@ -72,7 +72,13 @@ export default function SignupPage() {
 
   return (
     <main className="login-page">
+<<<<<<< HEAD
+      <h1 className="login-logo">
+        Job<span>Tracker</span>
+      </h1>
+=======
     <img src={logo} className="logo" alt="Job Buddy logo" />
+>>>>>>> main
 
       <section className="login-card signup-card">
         <div className="auth-tabs">
