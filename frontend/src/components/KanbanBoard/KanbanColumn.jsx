@@ -9,6 +9,8 @@ export default function KanbanColumn({
   onDragStart,
   onDrop,
   onAddClick,
+  isLoggedIn,
+  onStatusChange,
 }) {
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -61,12 +63,15 @@ export default function KanbanColumn({
             accentColor={accentColor}
             columnId={column.id}
             onDragStart={onDragStart}
+            onStatusChange={onStatusChange}
           />
         ))}
 
         {/* Empty state — shown when the column has no cards */}
-        {cards.length === 0 && (
-          <div className="kanban-column__empty">No applications yet</div>
+        {cards.length === 0 && !isLoggedIn && (
+          <div className="kanban-column__empty">
+            Log in to start tracking applications
+          </div>
         )}
       </div>
     </div>

@@ -16,7 +16,7 @@
     box-shadow 0.15s,
     opacity 0.15s,
     transform 0.15s;
-  overflow: hidden; /* so the accent bar clips to the card's border-radius */
+  overflow: visible;
   user-select: none;
 }
 
@@ -128,4 +128,110 @@
 
 .kanban-card__star--active {
   color: #f59e0b;
+}
+
+.kanban-card__status {
+  position: relative;
+  flex-shrink: 0;
+  display: none;
+  margin-right: 4px;
+}
+
+.kanban-card__status-button {
+  max-width: 120px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fbff;
+  color: var(--primary);
+  border: 1px solid #dbeafe;
+  border-radius: 999px;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+
+.kanban-card__status-button span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kanban-card__status-button:hover {
+  background: #eff6ff;
+}
+
+.kanban-card__status-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 20;
+  width: 160px;
+  max-width: calc(100vw - 48px);
+  padding: 8px;
+  border-radius: 14px;
+  background: white;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
+  border: 1px solid #e5e7eb;
+}
+
+.kanban-card__status-option {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.kanban-card__status-option:hover {
+  background: #f3f4f6;
+}
+
+.kanban-card__status-option.active {
+  background: #eaf3ff;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .kanban-card {
+    display: grid;
+    grid-template-columns: 5px 44px 1fr;
+    grid-template-areas:
+      "accent logo body"
+      "accent logo status";
+    align-items: center;
+    gap: 8px 10px;
+    padding: 14px 12px 14px 0;
+  }
+
+  .kanban-card__accent {
+    grid-area: accent;
+  }
+
+  .kanban-card__logo {
+    grid-area: logo;
+  }
+
+  .kanban-card__body {
+    grid-area: body;
+  }
+
+  .kanban-card__status {
+    grid-area: status;
+    display: block;
+    justify-self: start;
+  }
+
+  .kanban-card__star {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
 }

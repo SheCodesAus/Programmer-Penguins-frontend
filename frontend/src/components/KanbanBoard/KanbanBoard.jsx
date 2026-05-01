@@ -74,7 +74,7 @@ export default function KanbanBoard() {
             onDrop={handleDrop}
             onAddClick={(columnId) => setAddingToColumn(columnId)}
             isLoggedIn={isLoggedIn}
-            onStatusChange={handleStatusChange}
+            onStatusChange={changeCardStatus}
           />
         ))}
       </div>

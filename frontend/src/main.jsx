@@ -10,6 +10,8 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import "./index.css";
 
 import HomePage from "./pages/HomePage.jsx";
+import AboutPage from "./pages/AboutPage.jsx";
+import ContactPage from "./pages/ContactPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import SignupPage from "./pages/SignupPage.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
@@ -36,6 +38,8 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: "login", element: <LoginPage /> },
       { path: "signup", element: <SignupPage /> },
+      { path: "about", element: <AboutPage /> },
+      { path: "contact", element: <ContactPage /> },
       {
         path: "dashboard",
         element: (
@@ -45,7 +49,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "job-application",
+        path: "job-application/:id",
         element: (
           <ProtectedRoute>
             <JobApplicationPage />

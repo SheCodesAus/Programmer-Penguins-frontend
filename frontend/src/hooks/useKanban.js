@@ -15,12 +15,12 @@ export const COLUMNS = [
 ];
 
 export const COLUMN_ACCENT = {
-  FOUND: "#F472B6", // pink
-  APPLIED: "#60A5FA", // blue
-  INTERVIEWING: "#4ADE80", // green
-  OFFER: "#FACC15", // yellow
-  REJECTED: "#F87171", // red
-  WITHDRAWN: "#94A3B8", // slate
+  FOUND: "#F472B6",
+  APPLIED: "#60A5FA",
+  INTERVIEWING: "#4ADE80",
+  OFFER: "#FACC15",
+  REJECTED: "#F87171",
+  WITHDRAWN: "#94A3B8",
 };
 
 export default function useKanban() {
@@ -41,12 +41,20 @@ export default function useKanban() {
     try {
       setLoading(true);
       setError(null);
+
       const data = await fetchKanbanApplications({ signal });
 
       const normalised = {};
       COLUMNS.forEach((col) => {
-        normalised[col.id] = data[col.id] || [];
+        normalised[col.id] = [];
       });
+
+      data.forEach((application) => {
+        if (normalised[application.status]) {
+          normalised[application.status].push(application);
+        }
+      });
+
       setGrouped(normalised);
     } catch (err) {
       if (err.name === "AbortError") return;
@@ -73,9 +81,7 @@ export default function useKanban() {
 
       return {
         ...prev,
-
         [fromColId]: prev[fromColId].filter((c) => c.id !== cardId),
-
         [toColumnId]: [
           ...(prev[toColumnId] || []),
           { ...card, status: toColumnId },
@@ -86,28 +92,52 @@ export default function useKanban() {
     try {
       await updateApplicationStatus(cardId, toColumnId);
     } catch (err) {
-      setGrouped((prev) => {
-        const card = prev[toColumnId]?.find((c) => c.id === cardId);
-        if (!card) return prev;
-        return {
-          ...prev,
-          [toColumnId]: prev[toColumnId].filter((c) => c.id !== cardId),
-          [fromColId]: [...(prev[fromColId] || []), card],
-        };
-      });
       setError(`Could not move card: ${err.message}`);
+      loadBoard();
     } finally {
       dragCardId.current = null;
       dragFromCol.current = null;
     }
   }
 
+  async function changeCardStatus(cardId, newStatus) {
+    setGrouped((prev) => {
+      let movedCard = null;
+      const next = { ...prev };
+
+      for (const columnId of Object.keys(next)) {
+        const card = next[columnId]?.find((c) => c.id === cardId);
+
+        if (card) {
+          movedCard = { ...card, status: newStatus };
+          next[columnId] = next[columnId].filter((c) => c.id !== cardId);
+          break;
+        }
+      }
+
+      if (movedCard) {
+        next[newStatus] = [...(next[newStatus] || []), movedCard];
+      }
+
+      return next;
+    });
+
+    try {
+      await updateApplicationStatus(cardId, newStatus);
+    } catch (err) {
+      setError(`Could not update status: ${err.message}`);
+      loadBoard();
+    }
+  }
+
   async function createCard(formData) {
     const newCard = await createApplication(formData);
+
     setGrouped((prev) => ({
       ...prev,
       [newCard.status]: [...(prev[newCard.status] || []), newCard],
     }));
+
     return newCard;
   }
 
@@ -117,6 +147,7 @@ export default function useKanban() {
     error,
     handleDragStart,
     handleDrop,
+    changeCardStatus,
     createCard,
     reload: loadBoard,
   };

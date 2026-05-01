@@ -61,7 +61,10 @@ export default function LoginPage() {
 
   return (
     <main className="login-page">
-        <img src={logo} className="logo" alt="Job Buddy logo" />
+      
+      <h1 className="login-logo">
+        Job<span>Tracker</span>
+      </h1>
 
       <section className="login-card">
         <div className="auth-tabs">

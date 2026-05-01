@@ -18,6 +18,8 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { COLUMNS } from "../../hooks/useKanban";
 import "./KanbanCard.css";
 
 // Derive a favicon URL from a company name.
@@ -47,11 +49,14 @@ export default function KanbanCard({
   accentColor,
   onDragStart,
   columnId,
+  onStatusChange,
 }) {
+  const navigate = useNavigate();
   const [isDragging, setIsDragging] = useState(false);
   const [imgError, setImgError] = useState(false);
   // `starred` is local UI state only — wire this to an API field if needed later
   const [starred, setStarred] = useState(false);
+  const [statusMenuOpen, setStatusMenuOpen] = useState(false);
 
   function handleDragStart() {
     setIsDragging(true);
@@ -71,6 +76,15 @@ export default function KanbanCard({
       .join("")
       .toUpperCase() || "?";
 
+  function handleClick() {
+  navigate(`/job-application/${application.id}`);
+  }
+
+  function handleStatusChange(newStatus) {
+    onStatusChange(application.id, newStatus);
+    setStatusMenuOpen(false);
+  }
+
   return (
     <div
       className={`kanban-card ${isDragging ? "kanban-card--dragging" : ""}`}
@@ -78,6 +92,7 @@ export default function KanbanCard({
       draggable
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
+      onClick={handleClick}
     >
       {/* Left accent border — colour comes from CSS variable --accent */}
       <div className="kanban-card__accent" />
@@ -109,6 +124,39 @@ export default function KanbanCard({
           {/* Show date_applied if available, fall back to date_posted */}
           {formatDate(application.date_applied || application.date_posted)}
         </p>
+      </div>
+
+      <div
+        className="kanban-card__status"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          className="kanban-card__status-button"
+          type="button"
+          onClick={() => setStatusMenuOpen((prev) => !prev)}
+        >
+          <span>
+            {COLUMNS.find((col) => col.id === application.status)?.label || "Status"}
+          </span>
+          <span>▾</span>
+        </button>
+
+        {statusMenuOpen && (
+          <div className="kanban-card__status-menu">
+            {COLUMNS.map((col) => (
+              <button
+                key={col.id}
+                type="button"
+                className={`kanban-card__status-option ${
+                  col.id === application.status ? "active" : ""
+                }`}
+                onClick={() => handleStatusChange(col.id)}
+              >
+                {col.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Star toggle */}
