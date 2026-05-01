@@ -54,3 +54,13 @@
 .kanban-board__error button:hover {
     background: #fef2f2;
 }
+
+@media (max-width: 768px) {
+  .kanban-board {
+    padding: 16px;
+    gap: 12px;
+
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+}

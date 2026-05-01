@@ -5,12 +5,15 @@ import NewApplicationModal from "./NewApplicationModal";
 import "./KanbanBoard.css";
 
 export default function KanbanBoard() {
+  const isLoggedIn = !!localStorage.getItem("token");
+
   const {
     grouped,
     loading,
     error,
     handleDragStart,
     handleDrop,
+    changeCardStatus,
     createCard,
     reload,
   } = useKanban();
@@ -44,6 +47,8 @@ export default function KanbanBoard() {
             onDragStart={handleDragStart}
             onDrop={handleDrop}
             onAddClick={(columnId) => setAddingToColumn(columnId)}
+            isLoggedIn={isLoggedIn}
+            onStatusChange={changeCardStatus}
           />
         ))}
       </div>

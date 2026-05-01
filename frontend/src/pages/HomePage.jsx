@@ -9,15 +9,25 @@ import cardimage3 from "../assets/cardimage3.png";
 function HomePage() {
     const navigate = useNavigate();
 
+function handleStartTracking() {
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    navigate("/dashboard");
+  } else {
+    navigate("/login");
+  }
+}
+
     const Banner = () => {
         return (
             <div className="banner-container">
                 <div className="banner-content">
                     <h1>
                     From <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>application</span> to <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>offer</span>
-                    <br></br> - all in<span style={{ fontWeight: 'bold' }}> one place.</span>
+                    <br></br> - all in<span style={{ fontWeight: 'bold' }}> one place</span>
                     </h1>
-                    <button className="primary-btn" onClick={() => navigate("/login")}>
+                    <button className="primary-btn" onClick={handleStartTracking}>
                         Start tracking
                     </button>
                 </div>

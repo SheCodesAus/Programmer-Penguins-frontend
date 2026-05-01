@@ -1,36 +1,50 @@
+#navbar {
+  width: 100%;
+  position: relative;
+  background: white;
+  z-index: 1000;
+}
+
 #navbar nav {
+  width: 100%;
+  box-sizing: border-box;
   font-family: sans-serif;
-  box-shadow: 0 4px 4px 0px rgba(79, 79, 79, 0.1);
+  box-shadow: 0 4px 4px 0 rgba(79, 79, 79, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 10px 40px;
+  background: white;
 }
 
 .logo {
   height: 6vh;
 }
 
-#navbar .nav-link {
-  padding: 10px 20px 0px 20px;
+.logo-link {
+  display: flex;
+  align-items: center;
 }
 
 .nav-left,
-.nav-right {
+.nav-right,
+.desktop-links {
   display: flex;
   align-items: center;
 }
 
 .nav-left {
-  margin: 0 0 0 32px;
-  display: flex;
-  justify-content: flex-start;
+  gap: 24px;
 }
 
 .nav-right {
-  margin: 0 32px 0 0;
-  display: flex;
-  justify-content: flex-end;
+  gap: 16px;
+}
+
+#navbar .nav-link {
+  padding: 10px;
+  color: var(--text, #111827);
+  text-decoration: none;
 }
 
 .logout-btn {
@@ -43,7 +57,9 @@
   border: none;
 }
 
-
+.logout-btn:hover {
+  background-color: #b4b4b4;
+}
 
 .hamburger {
   display: none;
@@ -52,32 +68,31 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 30px;
+  padding: 12px;
 }
 
 .hamburger span {
   display: block;
-  width: 24px;
-  height: 2px;
-  background: var(--text, #333);
+  width: 26px;
+  height: 3px;
+  background: var(--text, #111827);
   border-radius: 2px;
 }
 
 .mobile-menu {
   display: none;
-  flex-direction: column;
-  gap: 16px;
-  padding: 16px 24px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  background: white;
-}
-
-.mobile-menu.open {
-  display: flex;
 }
 
 @media (max-width: 768px) {
-  .nav-left a:not(:first-child),
+  #navbar nav {
+    padding: 14px 24px;
+  }
+
+  .logo {
+    height: 42px;
+  }
+
+  .desktop-links,
   .nav-right {
     display: none;
   }
@@ -85,4 +100,48 @@
   .hamburger {
     display: flex;
   }
+
+  .mobile-menu {
+    position: absolute;
+    top: 72px;
+    right: 16px;
+    left: 16px;
+    z-index: 1001;
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .mobile-menu.open {
+    display: flex;
+  }
+
+  .mobile-menu a,
+  .mobile-menu__logout {
+    padding: 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--text, #111827);
+    font: inherit;
+    text-align: left;
+  }
+
+  .mobile-menu a:hover {
+    background: #f3f4f6;
+  }
+
+.mobile-menu__logout {
+  border: none;
+  background: #e2e2e2;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.mobile-menu__logout:hover {
+  background: #b4b4b4;
+}
 }
