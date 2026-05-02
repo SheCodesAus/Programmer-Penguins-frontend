@@ -20,18 +20,25 @@ export default function KanbanBoard() {
     reload,
   } = useKanban();
 
-  const [toastMessage, setToastMessage] = useState("");
+  const [toastMessage, setToastMessage] = useState(null);
   const [addingToColumn, setAddingToColumn] = useState(null);
+
+  function showToast(messageObject) {
+    setToastMessage(messageObject);
+    setTimeout(() => setToastMessage(null), 4000);
+  }
 
   async function handleCreateCard(formData) {
     const newCard = await createCard(formData);
 
-    setToastMessage(
-      getMotivationMessage({
+    showToast({
+      text: getMotivationMessage({
         action: "created",
         toStatus: newCard.status,
-      })
-    );
+      }),
+      toStatus: newCard.status,
+      action: "created",
+    });
 
     return newCard;
   }
@@ -39,11 +46,23 @@ export default function KanbanBoard() {
   async function handleStatusChange(cardId, newStatus) {
     await changeCardStatus(cardId, newStatus);
 
-    setToastMessage(
-      getMotivationMessage({
+    showToast({
+      text: getMotivationMessage({
         toStatus: newStatus,
-      })
-    );
+      }),
+      toStatus: newStatus,
+    });
+  }
+
+  async function handleDropWithToast(toColumnId) {
+    await handleDrop(toColumnId);
+
+    showToast({
+      text: getMotivationMessage({
+        toStatus: toColumnId,
+      }),
+      toStatus: toColumnId,
+    });
   }
 
   if (loading) {
@@ -71,10 +90,10 @@ export default function KanbanBoard() {
             cards={grouped[col.id] || []}
             accentColor={COLUMN_ACCENT[col.id]}
             onDragStart={handleDragStart}
-            onDrop={handleDrop}
+            onDrop={handleDropWithToast}
             onAddClick={(columnId) => setAddingToColumn(columnId)}
             isLoggedIn={isLoggedIn}
-            onStatusChange={changeCardStatus}
+            onStatusChange={handleStatusChange}
           />
         ))}
       </div>
@@ -88,7 +107,7 @@ export default function KanbanBoard() {
 
       <MotivationToast
         message={toastMessage}
-        onClose={() => setToastMessage("")}
+        onClose={() => setToastMessage(null)}
       />
     </>
   );
