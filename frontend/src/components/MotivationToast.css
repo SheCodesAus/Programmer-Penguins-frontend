@@ -1,0 +1,87 @@
+.motivation-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.motivation-modal {
+  background: white;
+  padding: 32px;
+  border-radius: 24px;
+  text-align: center;
+  max-width: 380px;
+  width: 90%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.22);
+  animation: pop 0.25s ease;
+  border: 2px solid #e5e7eb;
+}
+
+.motivation-modal--created {
+  background: #f8fbff;
+  border-color: #bfdbfe;
+}
+
+.motivation-modal--applied {
+  background: #eff6ff;
+  border-color: #93c5fd;
+}
+
+.motivation-modal--interviewing {
+  background: #f0fdf4;
+  border-color: #86efac;
+}
+
+.motivation-modal--offer {
+  background: #fffbeb;
+  border-color: #facc15;
+}
+
+.motivation-modal--rejected {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.motivation-modal--withdrawn {
+  background: #f5f3ff;
+  border-color: #c4b5fd;
+}
+
+.motivation-emoji {
+  font-size: 52px;
+  margin-bottom: 12px;
+  animation: bounce 0.4s ease;
+}
+
+.motivation-modal p {
+  font-size: 16px;
+  margin: 0 0 20px;
+  color: var(--text);
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
