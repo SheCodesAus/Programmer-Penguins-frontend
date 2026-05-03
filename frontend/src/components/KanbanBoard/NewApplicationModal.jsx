@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { COLUMNS } from "../../hooks/useKanban";
+import { extractJobFromUrl } from "../../api/applications";
+import { WandSparkles } from "lucide-react";
 import "./NewApplicationModal.css";
 
 const SOURCE_PLATFORMS = [
@@ -12,11 +14,15 @@ const SOURCE_PLATFORMS = [
 const EMPTY_FORM = {
   job_title: "",
   company_name: "",
-  source_platform: "SEEK",
+  source_platform: "OTHER",
   source_details: "",
   job_url: "",
   location: "",
-  status: "FOUND",
+  status: "",
+  salary_min: "",
+  salary_max: "",
+  currency: "AUD",
+  notes: "",
 };
 
 export default function NewApplicationModal({
@@ -28,32 +34,93 @@ export default function NewApplicationModal({
   const [form, setForm] = useState(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [jobLink, setJobLink] = useState("");
+  const [extracting, setExtracting] = useState(false);
 
-  // When the modal opens, reset the form and pre-select the column's status
   useEffect(() => {
     if (isOpen) {
       setForm({ ...EMPTY_FORM, status: defaultStatus || "FOUND" });
       setError(null);
+      setJobLink("");
     }
   }, [isOpen, defaultStatus]);
 
-  // Don't render anything when closed — this is cheaper than display:none
   if (!isOpen) return null;
 
-  // Single handler for every text/select input
   function handleChange(e) {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function handleJobLinkDrop(e) {
+    e.preventDefault();
+    const droppedText = e.dataTransfer.getData("text/plain");
+
+    if (droppedText) {
+      setJobLink(droppedText);
+      setForm((prev) => ({
+        ...prev,
+        job_url: droppedText,
+      }));
+    }
+  }
+
+  function handleJobLinkDragOver(e) {
+    e.preventDefault();
+  }
+
+  function detectSourcePlatform(url) {
+    const lowerUrl = url.toLowerCase();
+
+    if (lowerUrl.includes("seek.com")) return "SEEK";
+    if (lowerUrl.includes("linkedin.com")) return "LINKEDIN";
+    if (lowerUrl.includes("indeed.com")) return "INDEED";
+
+    return "OTHER";
+  }
+
+  async function handleExtractJobDetails() {
+    setExtracting(true);
+    setError(null);
+
+    try {
+      const data = await extractJobFromUrl(jobLink);
+
+      setForm((prev) => ({
+        ...prev,
+        job_url: data.job_url || jobLink,
+        job_title: data.job_title || prev.job_title,
+        company_name: data.company_name || prev.company_name,
+        source_platform: data.source_platform || prev.source_platform,
+        source_details: data.source_details || prev.source_details,
+        date_posted: data.date_posted || prev.date_posted,
+        salary_min: data.salary_min || prev.salary_min,
+        salary_max: data.salary_max || prev.salary_max,
+        currency: data.currency || prev.currency,
+        location: data.location || prev.location,
+        notes: data.notes || prev.notes,
+      }));
+    } catch (err) {
+      setError("Could not extract job details from this link.");
+    } finally {
+      setExtracting(false);
+    }
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
+
     try {
-      // If source isn't "OTHER", backend will blank source_details anyway,
-      // but sending empty string is safe and explicit.
-      await onCreate(form);
+      const payload = {
+        ...form,
+        source_platform: form.source_platform || "",
+        source_details:
+          form.source_platform === "OTHER" ? form.source_details : "",
+      };
+
+      await onCreate(payload);
       onClose();
     } catch (err) {
       setError(err.message);
@@ -63,9 +130,7 @@ export default function NewApplicationModal({
   }
 
   return (
-    // Backdrop: clicking it closes the modal
     <div className="new-app-modal__backdrop" onClick={onClose}>
-      {/* stopPropagation so clicks INSIDE the modal don't close it */}
       <div className="new-app-modal" onClick={(e) => e.stopPropagation()}>
         <div className="new-app-modal__header">
           <h2>New application</h2>
@@ -79,7 +144,51 @@ export default function NewApplicationModal({
         </div>
 
         <form onSubmit={handleSubmit} className="new-app-modal__form">
-          {/* Required: job_title */}
+          {/* 🔹 LINK BLOCK */}
+          <div
+            className="new-app-modal__link-drop"
+            onDrop={handleJobLinkDrop}
+            onDragOver={handleJobLinkDragOver}
+          >
+            <span className="new-app-modal__link-title">
+              Add a job link
+            </span>
+
+            <p>
+              Paste or drag a job advertisement link here to help auto-fill this application.
+            </p>
+
+            <input
+              type="url"
+              value={jobLink}
+              onChange={(e) => {
+                setJobLink(e.target.value);
+                setForm((prev) => ({
+                  ...prev,
+                  job_url: e.target.value,
+                }));
+              }}
+              placeholder="https://www.seek.com.au/job/..."
+            />
+
+            <button
+              type="button"
+              className="new-app-modal__autofill-btn"
+              disabled={!jobLink || extracting}
+              onClick={handleExtractJobDetails}
+            >
+              {extracting ? (
+                "Extracting..."
+              ) : (
+                <>
+                  <WandSparkles size={14} className="spin" />
+                  Auto-fill
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* FORM FIELDS */}
           <label>
             <span>Job title *</span>
             <input
@@ -91,7 +200,6 @@ export default function NewApplicationModal({
             />
           </label>
 
-          {/* Required: company_name */}
           <label>
             <span>Company *</span>
             <input
@@ -102,7 +210,6 @@ export default function NewApplicationModal({
             />
           </label>
 
-          {/* Source platform dropdown */}
           <label>
             <span>Source</span>
             <select
@@ -110,6 +217,7 @@ export default function NewApplicationModal({
               value={form.source_platform}
               onChange={handleChange}
             >
+              <option value="">Select source</option>
               {SOURCE_PLATFORMS.map((s) => (
                 <option key={s.value} value={s.value}>
                   {s.label}
@@ -118,17 +226,14 @@ export default function NewApplicationModal({
             </select>
           </label>
 
-          {/* Only show "specify" field when source is OTHER,
-                        matching the backend validator in the serializer */}
           {form.source_platform === "OTHER" && (
             <label>
-              <span>Specify source *</span>
+              <span>Specify source</span>
               <input
                 name="source_details"
                 value={form.source_details}
                 onChange={handleChange}
-                required
-                placeholder="e.g. Referred by a friend"
+                placeholder="e.g. referral, company site"
               />
             </label>
           )}
@@ -140,7 +245,6 @@ export default function NewApplicationModal({
               name="job_url"
               value={form.job_url}
               onChange={handleChange}
-              placeholder="https://..."
             />
           </label>
 
@@ -150,11 +254,9 @@ export default function NewApplicationModal({
               name="location"
               value={form.location}
               onChange={handleChange}
-              placeholder="Sydney, NSW"
             />
           </label>
 
-          {/* Status dropdown — lets user override the pre-selected column */}
           <label>
             <span>Status</span>
             <select name="status" value={form.status} onChange={handleChange}>
@@ -166,14 +268,80 @@ export default function NewApplicationModal({
             </select>
           </label>
 
-          {/* Error message from the API (serializer errors land here) */}
+          <label>
+            <span>Date posted</span>
+            <input
+              type="date"
+              name="date_posted"
+              value={form.date_posted}
+              onChange={handleChange}
+            />
+          </label>
+
+          <label>
+            <span>Date applied</span>
+            <input
+              type="date"
+              name="date_applied"
+              value={form.date_applied}
+              onChange={handleChange}
+            />
+          </label>
+
+          <label>
+            <span>Salary min</span>
+            <input
+              type="number"
+              name="salary_min"
+              value={form.salary_min}
+              onChange={handleChange}
+              min="0"
+              step="0.01"
+              placeholder="e.g. 70000"
+            />
+          </label>
+
+          <label>
+            <span>Salary max</span>
+            <input
+              type="number"
+              name="salary_max"
+              value={form.salary_max}
+              onChange={handleChange}
+              min="0"
+              step="0.01"
+              placeholder="e.g. 90000"
+            />
+          </label>
+
+          <label>
+            <span>Currency</span>
+            <input
+              name="currency"
+              value={form.currency}
+              onChange={handleChange}
+              placeholder="AUD"
+              maxLength="10"
+            />
+          </label>
+
+          <label className="new-app-modal__notes">
+            <span>Notes</span>
+            <textarea
+              name="notes"
+              value={form.notes}
+              onChange={handleChange}
+              rows="4"
+            />
+          </label>
+
           {error && <div className="new-app-modal__error">{error}</div>}
 
           <div className="new-app-modal__actions">
-            <button type="button" onClick={onClose} disabled={submitting}>
+            <button type="button" onClick={onClose}>
               Cancel
             </button>
-            <button type="submit" disabled={submitting} className="primary">
+            <button type="submit" className="primary">
               {submitting ? "Saving…" : "Add application"}
             </button>
           </div>

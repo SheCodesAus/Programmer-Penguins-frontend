@@ -11,7 +11,10 @@ export default function KanbanColumn({
   onAddClick,
   isLoggedIn,
   onStatusChange,
-}) {
+  onDeleteRequest,
+  onInterestChange,
+  interestFilter,
+})  {
   const [isDragOver, setIsDragOver] = useState(false);
 
   // ── Drop target handlers ───────────────────────────────────────────────
@@ -64,6 +67,9 @@ export default function KanbanColumn({
             columnId={column.id}
             onDragStart={onDragStart}
             onStatusChange={onStatusChange}
+            onDeleteRequest={onDeleteRequest}
+            onInterestChange={onInterestChange}
+            interestFilter={interestFilter}
           />
         ))}
 

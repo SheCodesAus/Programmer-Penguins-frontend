@@ -1,0 +1,116 @@
+.confirm-modal__backdrop {
+  position: fixed;
+  inset: 0;
+  background: #eaf7fb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 20px;
+}
+
+.confirm-modal {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 28px 32px 24px;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.18);
+  text-align: center;
+}
+
+.confirm-modal__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: #e2e2e2;
+  color: #333333;
+  font-size: 20px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.confirm-modal h2 {
+  margin: 0 0 12px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #111111;
+}
+
+.confirm-modal p {
+  margin: 0 auto;
+  max-width: 300px;
+  color: #222222;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.confirm-modal__actions {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  margin-top: 24px;
+}
+
+.confirm-modal__actions .secondary-btn,
+.confirm-modal__actions .danger-btn {
+  min-width: 120px;
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.confirm-modal__actions .secondary-btn {
+  background: #e2e2e2;
+  color: #111111;
+}
+
+.confirm-modal__actions .danger-btn {
+  background: #ef3f76;
+  color: #ffffff;
+}
+
+.confirm-modal__actions .secondary-btn:hover {
+  background: #d1d1d1;
+}
+
+.confirm-modal__actions .danger-btn:hover {
+  background: #d92f65;
+}
+
+@media (max-width: 480px) {
+  .confirm-modal__backdrop {
+    padding: 16px;
+    align-items: center;
+  }
+
+  .confirm-modal {
+    max-width: 100%;
+    padding: 28px 20px 22px;
+    border-radius: 14px;
+  }
+
+  .confirm-modal p {
+    max-width: 100%;
+    font-size: 0.9rem;
+  }
+
+  .confirm-modal__actions {
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .confirm-modal__actions .secondary-btn,
+  .confirm-modal__actions .danger-btn {
+    flex: 1;
+    min-width: 0;
+    padding: 11px 16px;
+  }
+}

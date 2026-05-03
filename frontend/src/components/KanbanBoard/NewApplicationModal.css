@@ -10,6 +10,52 @@
   animation: fadeIn 0.15s ease-out;
 }
 
+.new-app-modal__notes textarea {
+  min-height: 110px;
+  resize: vertical;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #d0d5dd;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.new-app-modal__notes textarea:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.new-app-modal__link-drop {
+  border: 1px dashed #b8c2cc;
+  border-radius: 14px;
+  padding: 14px;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.new-app-modal__link-title {
+  font-weight: 600;
+  color: #111827;
+}
+
+.new-app-modal__link-drop p {
+  margin: 0;
+  font-size: 14px;
+  color: #667085;
+}
+
+.new-app-modal__link-drop input {
+  width: 100%;
+}
+
+.new-app-modal__link-drop button {
+  align-self: flex-start;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -135,35 +181,120 @@
 }
 
 .new-app-modal__actions button {
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
   transition:
     background 0.15s,
-    border-color 0.15s;
-  border: 1px solid #cbd5e1;
-  background: #ffffff;
-  color: #475569;
+    transform 0.15s,
+    opacity 0.15s;
+  border: none;
+  background: #e2e2e2;
+  color: var(--text);
   font-family: inherit;
 }
 
 .new-app-modal__actions button:hover:not(:disabled) {
-  background: #f1f5f9;
+  background: #b4b4b4;
+  transform: translateY(-1px);
 }
 
 .new-app-modal__actions button.primary {
-  background: #1d4ed8;
-  border-color: #1d4ed8;
+  background: var(--primary);
   color: #ffffff;
 }
 
 .new-app-modal__actions button.primary:hover:not(:disabled) {
-  background: #1e40af;
+  background: var(--hoverbutton);
 }
 
 .new-app-modal__actions button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.new-app-modal__autofill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 10px 18px;
+  border-radius: 999px;
+
+  border: none;
+  background: var(--secondary);
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.new-app-modal__autofill-btn:hover {
+  background: var(--hoverbutton);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(29, 78, 216, 0.15);
+}
+
+.new-app-modal__autofill-btn:active {
+  transform: scale(0.97);
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 600px) {
+  .new-app-modal__backdrop {
+    padding: 0;
+    align-items: stretch;
+  }
+
+  .new-app-modal {
+    max-width: none;
+    width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .new-app-modal__header {
+    position: sticky;
+    top: 0;
+    background: #ffffff;
+    z-index: 2;
+    padding: 16px 18px;
+  }
+
+  .new-app-modal__form {
+    padding: 18px;
+  }
+
+  .new-app-modal__actions {
+    position: sticky;
+    bottom: 0;
+    background: #ffffff;
+    padding-top: 12px;
+    justify-content: stretch;
+  }
+
+  .new-app-modal__actions button {
+    flex: 1;
+  }
+
+  .new-app-modal__link-drop button {
+    width: 100%;
+  }
 }
