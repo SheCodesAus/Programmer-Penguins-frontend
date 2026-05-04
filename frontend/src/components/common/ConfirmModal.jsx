@@ -27,13 +27,15 @@ export default function ConfirmModal({
         <p>{message}</p>
 
         <div className="confirm-modal__actions">
-          <button type="button" className="secondary-btn" onClick={onCancel}>
-            {cancelText}
-          </button>
+            {cancelText && (
+                <button type="button" className="secondary-btn" onClick={onCancel}>
+                {cancelText}
+                </button>
+            )}
 
-          <button type="button" className="danger-btn" onClick={onConfirm}>
-            {confirmText}
-          </button>
+            <button type="button" className="danger-btn" onClick={onConfirm}>
+                {confirmText}
+            </button>
         </div>
       </div>
     </div>

@@ -63,7 +63,7 @@ export default function KanbanCard({
   const [imgError, setImgError] = useState(false);
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
 
-  const interestLevel = application.interest_level || 0;
+  const interestLevel = application.interest_level ?? 0;
   const isHidden = interestFilter > 0 && interestLevel < interestFilter;
 
   function handleDragStart() {

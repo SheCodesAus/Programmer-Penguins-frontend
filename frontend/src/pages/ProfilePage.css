@@ -1,0 +1,168 @@
+.profile-page {
+  min-height: calc(100vh - 88px);
+  background: var(--background);
+  padding: 0;
+  font-family: var(--body-font);
+}
+
+.profile-hero {
+  background: linear-gradient(135deg, var(--secondary), #eef6ff);
+  padding: 56px 24px;
+  min-height: calc(100vh - 88px);
+}
+
+.profile-hero__inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  background: var(--cardbackground);
+  border-radius: 28px;
+  padding: 40px;
+  display: grid;
+  grid-template-columns: 160px 1fr auto;
+  gap: 36px;
+  align-items: start;
+  box-shadow: 0 16px 40px rgba(22, 113, 238, 0.12);
+}
+
+.profile-hero__avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 32px;
+  background: var(--primary);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 52px;
+  font-weight: 800;
+}
+
+.profile-hero__details {
+  min-width: 0;
+}
+
+.profile-hero__name-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.profile-hero__name {
+  font-size: 2rem;
+  line-height: 1.1;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0;
+}
+
+.profile-hero__linkedin {
+  min-width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--primary);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.profile-hero__linkedin:hover {
+  background: var(--hoverbutton);
+  color: var(--text);
+}
+
+.profile-hero__username,
+.profile-hero__gender {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.profile-hero__gender {
+  margin-top: 6px;
+  margin-bottom: 28px;
+  text-transform: capitalize;
+}
+
+.profile-hero__details-list {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.profile-hero__row {
+  background: #f8fbff;
+  border: 1px solid #dbeafe;
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.profile-hero__label {
+  margin: 0 0 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.profile-hero__value {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  word-break: break-word;
+}
+
+.profile-hero__edit-btn {
+  background: var(--primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 24px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.profile-hero__edit-btn:hover {
+  background: var(--hoverbutton);
+  color: var(--text);
+}
+
+.profile-page__message {
+  min-height: calc(100vh - 88px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--secondary);
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .profile-hero__inner {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .profile-hero__avatar {
+    margin: 0 auto;
+  }
+
+  .profile-hero__name-row {
+    justify-content: center;
+  }
+
+  .profile-hero__details-list {
+    grid-template-columns: 1fr;
+    text-align: left;
+  }
+
+  .profile-hero__edit-btn {
+    width: 100%;
+  }
+}

@@ -154,7 +154,7 @@ export default function KanbanBoard() {
           <KanbanColumn
             key={col.id}
             column={col}
-            cards={grouped[col.id] || []}
+            cards={filterCardsByInterest(grouped[col.id] || [])}
             accentColor={COLUMN_ACCENT[col.id]}
             onDragStart={handleDragStart}
             onDrop={handleDropWithToast}
