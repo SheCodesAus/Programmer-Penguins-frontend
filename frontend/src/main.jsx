@@ -16,6 +16,8 @@ import LoginPage from "./pages/LoginPage.jsx";
 import SignupPage from "./pages/SignupPage.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
 import JobApplicationPage from "./pages/JobApplicationPage.jsx";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 import NavBar from "./components/NavBar.jsx";
 import { AuthProvider } from "./components/AuthProvider.jsx";
@@ -56,6 +58,8 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+       { path: "forgot-password", element: <ForgotPasswordPage /> },
+       { path: "reset-password/:uid/:token", element: <ResetPasswordPage /> },
     ],
   },
 ]);

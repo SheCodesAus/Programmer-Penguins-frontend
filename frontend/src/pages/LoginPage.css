@@ -192,6 +192,58 @@
   margin-bottom: 10px;
 }
 
+.auth-helper-text {
+  margin: 0 0 18px;
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.login-card h2 {
+  margin: 24px 0 14px;
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.auth-success {
+  background: #ecfdf3;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.auth-form .forgot-link {
+  display: inline-block;
+  margin-top: 4px;
+  color: var(--primary);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.auth-form .forgot-link:hover {
+  text-decoration: underline;
+}
+
+.auth-secondary-action {
+  margin-top: 12px;
+  text-align: left;
+}
+
+.auth-secondary-action .forgot-link {
+  color: var(--primary);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.auth-secondary-action .forgot-link:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 480px) {
   .login-page {
     padding: 16px;
