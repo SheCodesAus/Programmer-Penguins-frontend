@@ -1,6 +1,6 @@
 const BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
-  "https://jobbuddy-d4878ee60bba.herokuapp.com/";
+  "http://127.0.0.1:8000";
 
 const APPLICATIONS_PATH = "/api/applications";
 
@@ -46,5 +46,25 @@ export async function createApplication(data) {
   return apiFetch(`${APPLICATIONS_PATH}/`, {
     method: "POST",
     body: JSON.stringify(data),
+  });
+}
+
+export async function extractJobFromUrl(url) {
+  return apiFetch(`${APPLICATIONS_PATH}/extract/`, {
+    method: "POST",
+    body: JSON.stringify({ url }),
+  });
+}
+
+export async function deleteApplication(id) {
+  return apiFetch(`${APPLICATIONS_PATH}/${id}/`, {
+    method: "DELETE",
+  });
+}
+
+export async function updateApplicationInterest(id, interestLevel) {
+  return apiFetch(`${APPLICATIONS_PATH}/${id}/`, {
+    method: "PATCH",
+    body: JSON.stringify({ interest_level: interestLevel }),
   });
 }

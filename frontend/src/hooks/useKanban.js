@@ -141,6 +141,22 @@ export default function useKanban() {
     return newCard;
   }
 
+  function updateCardInterestLocally(cardId, interestLevel) {
+    setGrouped((prev) => {
+      const next = {};
+
+      for (const columnId of Object.keys(prev)) {
+        next[columnId] = prev[columnId].map((card) =>
+          card.id === cardId
+            ? { ...card, interest_level: interestLevel }
+            : card
+        );
+      }
+
+      return next;
+    });
+  }
+
   return {
     grouped,
     loading,
@@ -149,6 +165,7 @@ export default function useKanban() {
     handleDrop,
     changeCardStatus,
     createCard,
+    updateCardInterestLocally,
     reload: loadBoard,
   };
 }

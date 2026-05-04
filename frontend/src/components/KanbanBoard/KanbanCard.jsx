@@ -50,13 +50,17 @@ export default function KanbanCard({
   onDragStart,
   columnId,
   onStatusChange,
+  onDeleteRequest,
+  onInterestChange,
+  interestFilter,
 }) {
   const navigate = useNavigate();
   const [isDragging, setIsDragging] = useState(false);
   const [imgError, setImgError] = useState(false);
-  // `starred` is local UI state only — wire this to an API field if needed later
-  const [starred, setStarred] = useState(false);
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
+
+  const interestLevel = application.interest_level || 0;
+  const isHidden = interestFilter > 0 && interestLevel < interestFilter;
 
   function handleDragStart() {
     setIsDragging(true);
@@ -85,17 +89,17 @@ export default function KanbanCard({
     setStatusMenuOpen(false);
   }
 
-  return (
-    <div
-      className={`kanban-card ${isDragging ? "kanban-card--dragging" : ""}`}
-      style={{ "--accent": accentColor }}
-      draggable
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-      onClick={handleClick}
-    >
-      {/* Left accent border — colour comes from CSS variable --accent */}
-      <div className="kanban-card__accent" />
+return (
+  <div
+    className={`kanban-card kanban-card--interest-${interestLevel} ${
+      isHidden ? "kanban-card--hidden" : ""
+    } ${isDragging ? "kanban-card--dragging" : ""}`}
+    style={{ "--accent": accentColor }}
+    draggable
+    onDragStart={handleDragStart}
+    onDragEnd={handleDragEnd}
+    onClick={handleClick}
+  >
 
       {/* Company logo */}
       <div className="kanban-card__logo">
@@ -159,16 +163,41 @@ export default function KanbanCard({
         )}
       </div>
 
-      {/* Star toggle */}
-      <button
-        className={`kanban-card__star ${starred ? "kanban-card__star--active" : ""}`}
-        onClick={(e) => {
-          e.stopPropagation(); // don't trigger drag
-          setStarred((s) => !s);
-        }}
-        aria-label={starred ? "Unstar application" : "Star application"}
+      {/* Interest level hearts */}
+      <div
+        className="kanban-card__hearts"
+        onClick={(e) => e.stopPropagation()}
+        aria-label="Application interest level"
       >
-        ★
+        {[1, 2, 3].map((level) => (
+          <button
+            key={level}
+            type="button"
+            className={`kanban-card__heart ${
+              interestLevel >= level ? "kanban-card__heart--active" : ""
+            }`}
+            onClick={() =>
+              onInterestChange(
+                application.id,
+                interestLevel === level ? 0 : level
+              )
+            }
+            aria-label={`Set interest level to ${level}`}
+          >
+            ♥
+          </button>
+        ))}
+      </div>
+
+      <button
+        className="kanban-card__delete"
+        onClick={(e) => {
+          e.stopPropagation();
+          onDeleteRequest(application);
+        }}
+        aria-label="Delete application"
+      >
+        ×
       </button>
     </div>
   );
