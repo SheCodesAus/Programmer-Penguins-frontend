@@ -29,9 +29,15 @@ function NavBar() {
           </NavLink>
 
           <div className="desktop-links">
-            <NavLink className="nav-link" to="/about">About</NavLink>
-            <NavLink className="nav-link" to="/contact">Contact</NavLink>
-            <NavLink className="nav-link" to="/dashboard">Dashboard</NavLink>
+            <NavLink className="nav-link" to="/about">
+              About
+            </NavLink>
+            <NavLink className="nav-link" to="/contact">
+              Contact
+            </NavLink>
+            <NavLink className="nav-link" to="/dashboard">
+              Dashboard
+            </NavLink>
           </div>
         </div>
 
@@ -76,7 +82,10 @@ function NavBar() {
         </NavLink>
 
         {isLoggedIn && (
-          <NavLink to={`/profile/${auth.userId}`} onClick={() => setMenuOpen(false)}>
+          <NavLink
+            to={`/profile/${auth.userId}`}
+            onClick={() => setMenuOpen(false)}
+          >
             My Profile
           </NavLink>
         )}
