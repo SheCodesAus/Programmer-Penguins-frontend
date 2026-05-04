@@ -22,7 +22,6 @@ const EMPTY_FORM = {
   salary_min: "",
   salary_max: "",
   currency: "AUD",
-  notes: "",
 };
 
 export default function NewApplicationModal({
@@ -98,7 +97,6 @@ export default function NewApplicationModal({
         salary_max: data.salary_max || prev.salary_max,
         currency: data.currency || prev.currency,
         location: data.location || prev.location,
-        notes: data.notes || prev.notes,
       }));
     } catch (err) {
       setError("Could not extract job details from this link.");
@@ -322,16 +320,6 @@ export default function NewApplicationModal({
               onChange={handleChange}
               placeholder="AUD"
               maxLength="10"
-            />
-          </label>
-
-          <label className="new-app-modal__notes">
-            <span>Notes</span>
-            <textarea
-              name="notes"
-              value={form.notes}
-              onChange={handleChange}
-              rows="4"
             />
           </label>
 
