@@ -1,0 +1,191 @@
+.profile-page {
+  min-height: 100vh;
+  background: #ffffff;
+  padding: 24px 24px 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Hero banner ── */
+/* The curved bottom edge comes from a huge border-radius. The 100% radius
+   on the bottom corners creates a sweeping arc rather than a hard edge. */
+.profile-hero {
+  background: #dbeafe; /* light blue — matches the Figma swatch */
+  border-radius: 0 0 50% 50% / 0 0 80px 80px;
+  padding: 60px 24px 100px;
+  margin-top: 0;
+  overflow: hidden;
+  flex: 1;
+}
+
+/* Centered content container */
+.profile-hero__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 48px;
+  position: relative;
+}
+
+/* ── Avatar ── */
+.profile-hero__avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: #bfdbfe; /* lighter blue than the navbar avatar */
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+/* ── Details block ── */
+.profile-hero__details {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Name + LinkedIn row */
+.profile-hero__name-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 6px;
+}
+
+.profile-hero__name {
+  font-size: 26px;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+/* Square LinkedIn badge — flat fill, no border */
+.profile-hero__linkedin {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: #1d4ed8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition:
+    background 0.15s,
+    transform 0.15s;
+}
+
+.profile-hero__linkedin:hover {
+  background: #1e3a8a;
+  transform: translateY(-1px);
+}
+
+.profile-hero__username {
+  font-size: 14px;
+  color: #475569;
+  margin: 0 0 2px;
+}
+
+.profile-hero__gender {
+  font-size: 14px;
+  color: #475569;
+  margin: 0 0 32px;
+  padding-left: 4px; /* matches the small indent in the Figma */
+}
+
+/* ── Key/value detail list ── */
+/* CSS grid lets the labels and values line up in two clean columns. */
+.profile-hero__details-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+}
+
+.profile-hero__row {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  align-items: baseline;
+  gap: 24px;
+}
+
+.profile-hero__label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.profile-hero__value {
+  font-size: 15px;
+  color: #1e293b;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* ── Edit Profile button — pill, pinned to the right ── */
+.profile-hero__edit-btn {
+  background: #e5e7eb;
+  color: #1e293b;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    transform 0.15s;
+  flex-shrink: 0;
+  font-family: inherit;
+  align-self: flex-start;
+}
+
+.profile-hero__edit-btn:hover {
+  background: #1d4ed8;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* ── Mobile: stack avatar above details, drop the curve depth ── */
+@media (max-width: 800px) {
+  .profile-hero {
+    border-radius: 0 0 30px 30px;
+    padding: 40px 20px 60px;
+  }
+
+  .profile-hero__inner {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 24px;
+  }
+
+  .profile-hero__avatar {
+    width: 100px;
+    height: 100px;
+    font-size: 40px;
+  }
+
+  .profile-hero__name-row {
+    justify-content: center;
+  }
+
+  .profile-hero__row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    text-align: left;
+  }
+
+  .profile-hero__edit-btn {
+    position: static;
+    align-self: stretch;
+  }
+}
