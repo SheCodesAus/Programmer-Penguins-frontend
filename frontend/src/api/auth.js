@@ -55,3 +55,39 @@ export async function loginWithGoogle(accessToken) {
     }),
   });
 }
+
+export async function requestPasswordReset(email) {
+  const response = await fetch(`${BASE_URL}/api/auth/password-reset/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.detail || data.email || "Password reset failed.");
+  }
+
+  return data;
+}
+
+export async function confirmPasswordReset({ uid, token, password }) {
+  const response = await fetch(`${BASE_URL}/api/auth/password-reset-confirm/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ uid, token, password }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.detail || "Password reset failed.");
+  }
+
+  return data;
+}
