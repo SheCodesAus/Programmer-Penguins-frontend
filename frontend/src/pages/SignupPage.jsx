@@ -25,6 +25,8 @@ export default function SignupPage() {
       try {
         const data = await loginWithGoogle(tokenResponse.access_token);
         localStorage.setItem("token", data.key);
+        if (data.id) localStorage.setItem("userId", data.id);
+        if (data.email) localStorage.setItem("email", data.email);
         navigate("/dashboard");
       } catch (error) {
         setErrorMessage(error.message);
@@ -60,6 +62,8 @@ export default function SignupPage() {
 
       if (data.key) {
         localStorage.setItem("token", data.key);
+        if (data.id) localStorage.setItem("userId", data.id);
+        if (data.email) localStorage.setItem("email", data.email);
       }
 
       navigate("/dashboard");

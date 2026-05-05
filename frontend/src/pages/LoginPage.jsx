@@ -25,6 +25,9 @@ export default function LoginPage() {
         const data = await loginWithGoogle(tokenResponse.access_token);
 
         localStorage.setItem("token", data.key);
+        if (data.id) localStorage.setItem("userId", data.id);
+        if (data.email) localStorage.setItem("email", data.email);
+        setAuth({ token: data.key, userId: data.id ?? null, email: data.email ?? null });
         navigate("/dashboard");
       } catch (error) {
         setErrorMessage(error.message);
@@ -46,7 +49,9 @@ export default function LoginPage() {
       const data = await loginUser({ email, password });
 
       localStorage.setItem("token", data.key);
-      setAuth({ token: data.key, userId: data.userId ?? null });
+      if (data.id) localStorage.setItem("userId", data.id);
+      if (data.email) localStorage.setItem("email", data.email);
+      setAuth({ token: data.key, userId: data.id ?? null, email: data.email ?? null });
       navigate("/dashboard");
     } catch (error) {
       setErrorMessage(error.message);

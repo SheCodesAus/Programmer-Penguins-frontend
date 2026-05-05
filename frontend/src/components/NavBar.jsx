@@ -73,7 +73,7 @@ function NavBar() {
 
         {isLoggedIn && (
           <NavLink
-            to={`/profile/${auth.userId}`}
+            to="/profile"
             onClick={() => setMenuOpen(false)}
           >
             My Profile

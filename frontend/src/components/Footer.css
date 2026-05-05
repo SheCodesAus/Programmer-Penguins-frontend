@@ -197,15 +197,17 @@
   }
 
   .footer__col--logo {
-    align-self: flex-start;
+    align-self: center;
+    align-items: center;
+    text-align: center;
   }
 
   .footer__col--pages {
-    align-items: flex-start;
-    text-align: left;
+    align-items: center;
+    text-align: center;
   }
 
   .footer__links {
-    align-items: flex-start;
+    align-items: center;
   }
 }
