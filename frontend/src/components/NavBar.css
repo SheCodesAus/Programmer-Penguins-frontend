@@ -144,4 +144,7 @@
 .mobile-menu__logout:hover {
   background: #b4b4b4;
 }
+
+.site-main {
+  min-height: calc(100vh - 240px);
 }

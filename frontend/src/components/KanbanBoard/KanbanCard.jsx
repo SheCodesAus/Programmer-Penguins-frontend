@@ -25,11 +25,15 @@ import "./KanbanCard.css";
 // Derive a favicon URL from a company name.
 // We use Google's public favicon service as a free, zero-config solution.
 // Falls back to a plain coloured initial if the image fails to load.
-function getFaviconUrl(companyName) {
-  // Simple heuristic: turn "Atlassian" → "atlassian.com"
-  // This won't be perfect for all companies but works well for known brands.
-  const slug = companyName.toLowerCase().replace(/\s+/g, "");
-  return `https://www.google.com/s2/favicons?domain=${slug}.com&sz=40`;
+function getFaviconUrl(application) {
+  if (!application.job_url) return null;
+
+  try {
+    const url = new URL(application.job_url);
+    return `https://www.google.com/s2/favicons?domain=${url.hostname}&sz=40`;
+  } catch {
+    return null;
+  }
 }
 
 // Format a date string (ISO "2025-04-15") to something readable ("15 Apr 2025").
@@ -59,7 +63,7 @@ export default function KanbanCard({
   const [imgError, setImgError] = useState(false);
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
 
-  const interestLevel = application.interest_level || 0;
+  const interestLevel = application.interest_level ?? 0;
   const isHidden = interestFilter > 0 && interestLevel < interestFilter;
 
   function handleDragStart() {
@@ -89,6 +93,8 @@ export default function KanbanCard({
     setStatusMenuOpen(false);
   }
 
+  const faviconUrl = getFaviconUrl(application);
+
 return (
   <div
     className={`kanban-card kanban-card--interest-${interestLevel} ${
@@ -103,8 +109,7 @@ return (
 
       {/* Company logo */}
       <div className="kanban-card__logo">
-        {imgError ? (
-          // Fallback: coloured circle with company initials
+        {imgError || !faviconUrl ? (
           <div
             className="kanban-card__logo-fallback"
             style={{ background: accentColor }}
@@ -113,8 +118,8 @@ return (
           </div>
         ) : (
           <img
-            src={getFaviconUrl(application.company_name)}
-            alt={application.company_name}
+            src={faviconUrl}
+            alt={`${application.company_name} logo`}
             onError={() => setImgError(true)}
           />
         )}

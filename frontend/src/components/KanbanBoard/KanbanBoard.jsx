@@ -108,7 +108,7 @@ export default function KanbanBoard() {
     if (interestFilter === 0) return cards;
 
     return cards.filter(
-      (card) => (card.interest_level || 0) >= interestFilter
+      (card) => (card.interest_level || 0) === interestFilter
     );
   }
 
@@ -126,12 +126,12 @@ export default function KanbanBoard() {
             key={level}
             type="button"
             className={`kanban-board__filter-heart ${
-              interestFilter >= level ? "active" : ""
+              interestFilter === level ? "active" : ""
             }`}
             onClick={() =>
               setInterestFilter(interestFilter === level ? 0 : level)
             }
-            aria-label={`Show applications with at least ${level} hearts`}
+            aria-label={`Show applications with ${level} hearts`}
           >
             ♥
           </button>
@@ -154,7 +154,7 @@ export default function KanbanBoard() {
           <KanbanColumn
             key={col.id}
             column={col}
-            cards={grouped[col.id] || []}
+            cards={filterCardsByInterest(grouped[col.id] || [])}
             accentColor={COLUMN_ACCENT[col.id]}
             onDragStart={handleDragStart}
             onDrop={handleDropWithToast}

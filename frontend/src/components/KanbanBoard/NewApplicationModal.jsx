@@ -19,10 +19,30 @@ const EMPTY_FORM = {
   job_url: "",
   location: "",
   status: "",
+  date_posted: "",
+  date_applied: "",
   salary_min: "",
   salary_max: "",
   currency: "AUD",
 };
+
+function cleanFormData(form) {
+  return {
+    ...form,
+
+    status: form.status || "FOUND",
+
+    date_posted: form.date_posted || null,
+    date_applied: form.date_applied || null,
+
+    salary_min: form.salary_min === "" ? null : form.salary_min,
+    salary_max: form.salary_max === "" ? null : form.salary_max,
+
+    source_platform: form.source_platform || "",
+    source_details:
+      form.source_platform === "OTHER" ? form.source_details : "",
+  };
+}
 
 export default function NewApplicationModal({
   isOpen,
@@ -41,6 +61,8 @@ export default function NewApplicationModal({
       setForm({ ...EMPTY_FORM, status: defaultStatus || "FOUND" });
       setError(null);
       setJobLink("");
+      setSubmitting(false);
+      setExtracting(false);
     }
   }, [isOpen, defaultStatus]);
 
@@ -68,16 +90,6 @@ export default function NewApplicationModal({
     e.preventDefault();
   }
 
-  function detectSourcePlatform(url) {
-    const lowerUrl = url.toLowerCase();
-
-    if (lowerUrl.includes("seek.com")) return "SEEK";
-    if (lowerUrl.includes("linkedin.com")) return "LINKEDIN";
-    if (lowerUrl.includes("indeed.com")) return "INDEED";
-
-    return "OTHER";
-  }
-
   async function handleExtractJobDetails() {
     setExtracting(true);
     setError(null);
@@ -93,12 +105,13 @@ export default function NewApplicationModal({
         source_platform: data.source_platform || prev.source_platform,
         source_details: data.source_details || prev.source_details,
         date_posted: data.date_posted || prev.date_posted,
-        salary_min: data.salary_min || prev.salary_min,
-        salary_max: data.salary_max || prev.salary_max,
+        date_applied: data.date_applied || prev.date_applied,
+        salary_min: data.salary_min ?? prev.salary_min,
+        salary_max: data.salary_max ?? prev.salary_max,
         currency: data.currency || prev.currency,
         location: data.location || prev.location,
       }));
-    } catch (err) {
+    } catch {
       setError("Could not extract job details from this link.");
     } finally {
       setExtracting(false);
@@ -111,17 +124,12 @@ export default function NewApplicationModal({
     setError(null);
 
     try {
-      const payload = {
-        ...form,
-        source_platform: form.source_platform || "",
-        source_details:
-          form.source_platform === "OTHER" ? form.source_details : "",
-      };
+      const payload = cleanFormData(form);
 
       await onCreate(payload);
       onClose();
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Could not create application. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -142,18 +150,16 @@ export default function NewApplicationModal({
         </div>
 
         <form onSubmit={handleSubmit} className="new-app-modal__form">
-          {/* 🔹 LINK BLOCK */}
           <div
             className="new-app-modal__link-drop"
             onDrop={handleJobLinkDrop}
             onDragOver={handleJobLinkDragOver}
           >
-            <span className="new-app-modal__link-title">
-              Add a job link
-            </span>
+            <span className="new-app-modal__link-title">Add a job link</span>
 
             <p>
-              Paste or drag a job advertisement link here to help auto-fill this application.
+              Paste or drag a job advertisement link here to help auto-fill this
+              application.
             </p>
 
             <input
@@ -186,12 +192,11 @@ export default function NewApplicationModal({
             </button>
           </div>
 
-          {/* FORM FIELDS */}
           <label>
             <span>Job title *</span>
             <input
               name="job_title"
-              value={form.job_title}
+              value={form.job_title || ""}
               onChange={handleChange}
               required
               autoFocus
@@ -202,7 +207,7 @@ export default function NewApplicationModal({
             <span>Company *</span>
             <input
               name="company_name"
-              value={form.company_name}
+              value={form.company_name || ""}
               onChange={handleChange}
               required
             />
@@ -212,13 +217,13 @@ export default function NewApplicationModal({
             <span>Source</span>
             <select
               name="source_platform"
-              value={form.source_platform}
+              value={form.source_platform || ""}
               onChange={handleChange}
             >
               <option value="">Select source</option>
-              {SOURCE_PLATFORMS.map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
+              {SOURCE_PLATFORMS.map((source) => (
+                <option key={source.value} value={source.value}>
+                  {source.label}
                 </option>
               ))}
             </select>
@@ -229,7 +234,7 @@ export default function NewApplicationModal({
               <span>Specify source</span>
               <input
                 name="source_details"
-                value={form.source_details}
+                value={form.source_details || ""}
                 onChange={handleChange}
                 placeholder="e.g. referral, company site"
               />
@@ -241,7 +246,7 @@ export default function NewApplicationModal({
             <input
               type="url"
               name="job_url"
-              value={form.job_url}
+              value={form.job_url || ""}
               onChange={handleChange}
             />
           </label>
@@ -250,17 +255,21 @@ export default function NewApplicationModal({
             <span>Location</span>
             <input
               name="location"
-              value={form.location}
+              value={form.location || ""}
               onChange={handleChange}
             />
           </label>
 
           <label>
             <span>Status</span>
-            <select name="status" value={form.status} onChange={handleChange}>
-              {COLUMNS.map((col) => (
-                <option key={col.id} value={col.id}>
-                  {col.label}
+            <select
+              name="status"
+              value={form.status || ""}
+              onChange={handleChange}
+            >
+              {COLUMNS.map((column) => (
+                <option key={column.id} value={column.id}>
+                  {column.label}
                 </option>
               ))}
             </select>
@@ -271,7 +280,7 @@ export default function NewApplicationModal({
             <input
               type="date"
               name="date_posted"
-              value={form.date_posted}
+              value={form.date_posted || ""}
               onChange={handleChange}
             />
           </label>
@@ -281,7 +290,7 @@ export default function NewApplicationModal({
             <input
               type="date"
               name="date_applied"
-              value={form.date_applied}
+              value={form.date_applied || ""}
               onChange={handleChange}
             />
           </label>
@@ -291,7 +300,7 @@ export default function NewApplicationModal({
             <input
               type="number"
               name="salary_min"
-              value={form.salary_min}
+              value={form.salary_min ?? ""}
               onChange={handleChange}
               min="0"
               step="0.01"
@@ -304,7 +313,7 @@ export default function NewApplicationModal({
             <input
               type="number"
               name="salary_max"
-              value={form.salary_max}
+              value={form.salary_max ?? ""}
               onChange={handleChange}
               min="0"
               step="0.01"
@@ -316,7 +325,7 @@ export default function NewApplicationModal({
             <span>Currency</span>
             <input
               name="currency"
-              value={form.currency}
+              value={form.currency || ""}
               onChange={handleChange}
               placeholder="AUD"
               maxLength="10"
@@ -329,7 +338,8 @@ export default function NewApplicationModal({
             <button type="button" onClick={onClose}>
               Cancel
             </button>
-            <button type="submit" className="primary">
+
+            <button type="submit" className="primary" disabled={submitting}>
               {submitting ? "Saving…" : "Add application"}
             </button>
           </div>

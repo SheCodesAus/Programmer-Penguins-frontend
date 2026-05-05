@@ -3,6 +3,7 @@ import "./NavBar.css";
 import useAuth from "../hooks/use-auth.js";
 import logo from "../assets/logo.png";
 import { useState } from "react";
+import Footer from "./Footer";
 
 function NavBar() {
   const { auth, setAuth } = useAuth();
@@ -29,12 +30,6 @@ function NavBar() {
           </NavLink>
 
           <div className="desktop-links">
-            <NavLink className="nav-link" to="/about">
-              About
-            </NavLink>
-            <NavLink className="nav-link" to="/contact">
-              Contact
-            </NavLink>
             <NavLink className="nav-link" to="/dashboard">
               Dashboard
             </NavLink>
@@ -43,7 +38,7 @@ function NavBar() {
 
         <div className="nav-right">
           {isLoggedIn && (
-            <NavLink className="nav-link" to={`/profile/${auth.userId}`}>
+            <NavLink className="nav-link" to={`/profile`}>
               My profile
             </NavLink>
           )}
@@ -70,20 +65,15 @@ function NavBar() {
         </button>
       </nav>
 
+      {/* 📱 Mobile menu */}
       <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
         <NavLink to="/dashboard" onClick={() => setMenuOpen(false)}>
           Dashboard
         </NavLink>
-        <NavLink to="/about" onClick={() => setMenuOpen(false)}>
-          About
-        </NavLink>
-        <NavLink to="/contact" onClick={() => setMenuOpen(false)}>
-          Contact
-        </NavLink>
 
         {isLoggedIn && (
           <NavLink
-            to={`/profile/${auth.userId}`}
+            to="/profile"
             onClick={() => setMenuOpen(false)}
           >
             My Profile
@@ -101,7 +91,11 @@ function NavBar() {
         )}
       </div>
 
-      <Outlet />
+      <main className="site-main">
+        <Outlet />
+      </main>
+
+      <Footer />
     </div>
   );
 }
