@@ -28,6 +28,7 @@ export default function KanbanBoard() {
   const [addingToColumn, setAddingToColumn] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [interestFilter, setInterestFilter] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
 
   function showToast(messageObject) {
     setToastMessage(messageObject);
@@ -112,6 +113,19 @@ export default function KanbanBoard() {
     );
   }
 
+  function filterCardsBySearch(cards) {
+    if (!searchQuery.trim()) return cards;
+
+    const query = searchQuery.toLowerCase();
+
+    return cards.filter((card) => {
+      return (
+        card.job_title?.toLowerCase().includes(query) ||
+        card.company_name?.toLowerCase().includes(query)
+      );
+    });
+  }
+
   return (
     <>
     <div className="kanban-board__interest-filter">
@@ -138,6 +152,14 @@ export default function KanbanBoard() {
         ))}
       </div>
 
+      <input
+        type="text"
+        className="kanban-board__search"
+        placeholder="Search by company or job title..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
+
       {interestFilter > 0 && (
         <button
           type="button"
@@ -154,7 +176,9 @@ export default function KanbanBoard() {
           <KanbanColumn
             key={col.id}
             column={col}
-            cards={filterCardsByInterest(grouped[col.id] || [])}
+            cards={filterCardsBySearch(
+              filterCardsByInterest(grouped[col.id] || [])
+            )}
             accentColor={COLUMN_ACCENT[col.id]}
             onDragStart={handleDragStart}
             onDrop={handleDropWithToast}
