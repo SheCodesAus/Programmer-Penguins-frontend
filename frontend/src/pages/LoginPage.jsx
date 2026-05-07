@@ -4,7 +4,6 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { loginUser, loginWithGoogle } from "../api/auth";
 import googleLogo from "../assets/GoogleButton.svg";
 import "./LoginPage.css";
-import logo from "../assets/logo.png";
 import useAuth from "../hooks/use-auth.js";
 
 export default function LoginPage() {
@@ -13,12 +12,14 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [formErrors, setFormErrors] = useState({});
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       setErrorMessage("");
+      setFormErrors({});
       setIsLoading(true);
 
       try {
@@ -27,7 +28,13 @@ export default function LoginPage() {
         localStorage.setItem("token", data.key);
         if (data.id) localStorage.setItem("userId", data.id);
         if (data.email) localStorage.setItem("email", data.email);
-        setAuth({ token: data.key, userId: data.id ?? null, email: data.email ?? null });
+
+        setAuth({
+          token: data.key,
+          userId: data.id ?? null,
+          email: data.email ?? null,
+        });
+
         navigate("/dashboard");
       } catch (error) {
         setErrorMessage(error.message);
@@ -43,6 +50,23 @@ export default function LoginPage() {
   async function handleLogin(event) {
     event.preventDefault();
     setErrorMessage("");
+
+    const errors = {};
+
+    if (!email.trim()) {
+      errors.email = "Please enter your email.";
+    }
+
+    if (!password.trim()) {
+      errors.password = "Please enter your password.";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    setFormErrors({});
     setIsLoading(true);
 
     try {
@@ -51,7 +75,13 @@ export default function LoginPage() {
       localStorage.setItem("token", data.key);
       if (data.id) localStorage.setItem("userId", data.id);
       if (data.email) localStorage.setItem("email", data.email);
-      setAuth({ token: data.key, userId: data.id ?? null, email: data.email ?? null });
+
+      setAuth({
+        token: data.key,
+        userId: data.id ?? null,
+        email: data.email ?? null,
+      });
+
       navigate("/dashboard");
     } catch (error) {
       setErrorMessage(error.message);
@@ -66,7 +96,6 @@ export default function LoginPage() {
 
   return (
     <main className="login-page">
-      
       <h1 className="login-logo">
         Job<span>Tracker</span>
       </h1>
@@ -95,24 +124,36 @@ export default function LoginPage() {
           <span>OR</span>
         </div>
 
-        <form className="auth-form" onSubmit={handleLogin}>
+        <form className="auth-form" onSubmit={handleLogin} noValidate>
           <label>Email</label>
           <input
+            className={formErrors.email ? "input-error" : ""}
             type="email"
             placeholder="example@email.com"
             value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            required
+            onChange={(event) => {
+              setEmail(event.target.value);
+              setFormErrors((prev) => ({ ...prev, email: "" }));
+            }}
           />
+          {formErrors.email && (
+            <p className="form-error">{formErrors.email}</p>
+          )}
 
           <label>Password</label>
           <input
+            className={formErrors.password ? "input-error" : ""}
             type="password"
             placeholder="Password"
             value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            required
+            onChange={(event) => {
+              setPassword(event.target.value);
+              setFormErrors((prev) => ({ ...prev, password: "" }));
+            }}
           />
+          {formErrors.password && (
+            <p className="form-error">{formErrors.password}</p>
+          )}
 
           <Link className="forgot-link" to="/forgot-password">
             Forgot Password

@@ -27,13 +27,19 @@ export default function MotivationToast({ message, onClose }) {
 
   useEffect(() => {
     if (message) {
-      setShowConfetti(true);
+      const shouldShowConfetti =
+        message.toStatus !== "REJECTED" &&
+        message.toStatus !== "WITHDRAWN";
 
-      const timer = setTimeout(() => {
-        setShowConfetti(false);
-      }, 2500);
+      setShowConfetti(shouldShowConfetti);
 
-      return () => clearTimeout(timer);
+      if (shouldShowConfetti) {
+        const timer = setTimeout(() => {
+          setShowConfetti(false);
+        }, 2500);
+
+        return () => clearTimeout(timer);
+      }
     }
   }, [message]);
 
