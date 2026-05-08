@@ -133,9 +133,17 @@ export default function useKanban() {
   async function createCard(formData) {
     const newCard = await createApplication(formData);
 
+    if (!newCard?.id || !newCard?.status) {
+      await loadBoard();
+      return newCard;
+    }
+
     setGrouped((prev) => ({
       ...prev,
-      [newCard.status]: [...(prev[newCard.status] || []), newCard],
+      [newCard.status]: [
+        ...(prev[newCard.status] || []),
+        newCard,
+      ],
     }));
 
     return newCard;

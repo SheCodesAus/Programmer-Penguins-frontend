@@ -7,6 +7,7 @@ import { getMotivationMessage } from "../../utils/motivationMessages";
 import ConfirmModal from "../common/ConfirmModal";
 import { deleteApplication,  updateApplicationInterest } from "../../api/applications";
 import { Filter } from "lucide-react";
+import { Link } from "react-router-dom";
 import "./KanbanBoard.css";
 
 export default function KanbanBoard() {
@@ -131,7 +132,7 @@ export default function KanbanBoard() {
     <div className="kanban-board__interest-filter">
       <div className="kanban-board__filter-icon-wrapper">
         <Filter className="kanban-board__filter-icon" size={18} />
-        <span className="kanban-board__tooltip">Filter by interest</span>
+        <span className="kanban-board__filter-tooltip">Filter by interest</span>
       </div>
 
       <div className="kanban-board__filter-hearts">
@@ -159,6 +160,22 @@ export default function KanbanBoard() {
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
+
+      <div className="kanban-board__actions">
+        <Link to="/archive" className="kanban-board__icon-tooltip">
+          📦
+          <span className="kanban-board__icon-tooltip-text">
+            Archived applications
+          </span>
+        </Link>
+
+        <Link to="/trash" className="kanban-board__icon-tooltip">
+          🗑
+          <span className="kanban-board__icon-tooltip-text">
+            Deleted applications
+          </span>
+        </Link>
+      </div>
 
       {interestFilter > 0 && (
         <button
