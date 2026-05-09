@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../api/auth";
 import "./ProfilePage.css";
 
@@ -12,6 +13,7 @@ function formatDate(dateStr) {
 }
 
 export default function ProfilePage() {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState("");
 
@@ -21,8 +23,10 @@ export default function ProfilePage() {
       .catch((err) => setError(err.message));
   }, []);
 
-  if (error) return <main className="profile-page__message">Error: {error}</main>;
-  if (!profile) return <main className="profile-page__message">Loading profile...</main>;
+  if (error)
+    return <main className="profile-page__message">Error: {error}</main>;
+  if (!profile)
+    return <main className="profile-page__message">Loading profile...</main>;
 
   const initials = getInitials(profile.first_name, profile.last_name);
 
@@ -46,7 +50,8 @@ export default function ProfilePage() {
           <div className="profile-hero__details">
             <div className="profile-hero__name-row">
               <h1 className="profile-hero__name">
-                {profile.first_name || "First Name"} {profile.last_name || "Last Name"}
+                {profile.first_name || "First Name"}{" "}
+                {profile.last_name || "Last Name"}
               </h1>
 
               {profile.linkedin_url && (
@@ -80,7 +85,11 @@ export default function ProfilePage() {
             </dl>
           </div>
 
-          <button className="profile-hero__edit-btn" type="button">
+          <button
+            className="profile-hero__edit-btn"
+            type="button"
+            onClick={() => navigate("/profile/edit")}
+          >
             Edit Profile
           </button>
         </div>

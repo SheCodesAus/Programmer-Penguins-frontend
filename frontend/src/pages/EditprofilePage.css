@@ -1,0 +1,232 @@
+.edit-profile-page {
+  min-height: calc(100vh - 88px);
+  background: linear-gradient(135deg, var(--secondary, #dbeafe), #eef6ff);
+  padding: 56px 24px;
+  font-family: var(--body-font, sans-serif);
+  box-sizing: border-box;
+}
+
+.edit-profile-page__message {
+  min-height: calc(100vh - 88px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--secondary, #dbeafe);
+  font-weight: 700;
+}
+
+/* ── Form card ── */
+.edit-profile-form {
+  max-width: 1080px;
+  margin: 0 auto;
+  background: var(--cardbackground, #ffffff);
+  border-radius: 28px;
+  padding: 48px 56px 40px;
+  box-shadow: 0 16px 40px rgba(22, 113, 238, 0.12);
+}
+
+.edit-profile-form__title {
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 32px;
+  color: var(--text, #111827);
+}
+
+/* ── Top-level messages ── */
+.edit-profile-form__top-error,
+.edit-profile-form__success {
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.edit-profile-form__top-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+.edit-profile-form__success {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+
+/* ── Two-column grid ── */
+/* The grid auto-flows row by row: column 1, column 2, then next row.
+   This matches the visual order in the Figma screenshot. */
+.edit-profile-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px 48px;
+  margin-bottom: 32px;
+}
+
+/* ── Field block ── */
+.edit-profile-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.edit-profile-form__field--link {
+  /* Vertically center the Change Password link in its grid cell so it
+       aligns with the bottom of the input on the other side */
+  justify-content: flex-end;
+  padding-bottom: 12px;
+}
+
+.edit-profile-form__label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text, #111827);
+}
+
+/* ── Input + select ── */
+.edit-profile-form__input {
+  border: 1px solid #cbd5e1;
+  border-radius: 999px; /* pill shape — matches the Figma */
+  padding: 12px 18px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--text, #111827);
+  background: #ffffff;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.edit-profile-form__input::placeholder {
+  color: #94a3b8;
+}
+
+.edit-profile-form__input:focus {
+  border-color: var(--primary, #1d4ed8);
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
+}
+
+.edit-profile-form__input.is-error {
+  border-color: #ef4444;
+}
+
+.edit-profile-form__input.is-error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+/* Select needs a custom caret — the native one looks inconsistent */
+.edit-profile-form__select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3e%3cpath d='M3 4.5l3 3 3-3' stroke='%231d4ed8' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  padding-right: 42px;
+  cursor: pointer;
+}
+
+/* ── Per-field error ── */
+.edit-profile-form__error {
+  font-size: 0.8rem;
+  color: #b91c1c;
+  padding-left: 18px;
+}
+
+/* ── "Change Password" link ── */
+.edit-profile-form__change-password {
+  color: var(--text, #111827);
+  text-decoration: underline;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.edit-profile-form__change-password:hover {
+  color: var(--primary, #1d4ed8);
+}
+
+/* ── Action buttons (stacked, centered) ── */
+.edit-profile-form__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.edit-profile-form__save,
+.edit-profile-form__delete {
+  border: none;
+  border-radius: 999px;
+  padding: 14px 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  width: 360px;
+  max-width: 100%;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    transform 0.15s;
+}
+
+.edit-profile-form__save {
+  background: var(--primary, #1d4ed8);
+  color: #ffffff;
+}
+
+.edit-profile-form__save:hover:not(:disabled) {
+  background: var(--hoverbutton, #1e40af);
+}
+
+.edit-profile-form__save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.edit-profile-form__delete {
+  background: #e2e2e2;
+  color: var(--text, #111827);
+}
+
+.edit-profile-form__delete:hover:not(:disabled) {
+  background: #d1d5db;
+}
+
+.edit-profile-form__delete:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Mobile: collapse to a single column ── */
+@media (max-width: 800px) {
+  .edit-profile-page {
+    padding: 24px 12px;
+  }
+
+  .edit-profile-form {
+    padding: 28px 20px 24px;
+    border-radius: 20px;
+  }
+
+  .edit-profile-form__grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .edit-profile-form__field--link {
+    padding-bottom: 0;
+  }
+
+  .edit-profile-form__save,
+  .edit-profile-form__delete {
+    width: 100%;
+  }
+}

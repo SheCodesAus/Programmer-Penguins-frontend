@@ -20,6 +20,9 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import NavBar from "./components/NavBar.jsx";
+import ArchivePage from "./pages/ArchivePage.jsx";
+import TrashPage from "./pages/TrashPage.jsx";
+import EditProfilePage from "./pages/EditprofilePage.jsx";
 import { AuthProvider } from "./components/AuthProvider.jsx";
 
 function ProtectedRoute({ children }) {
@@ -76,6 +79,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "profile/edit",
+        element: (
+          <ProtectedRoute>
+            <EditprofilePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "job-application/:id",
         element: (
           <ProtectedRoute>
@@ -83,8 +94,8 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-       { path: "forgot-password", element: <ForgotPasswordPage /> },
-       { path: "reset-password/:uid/:token", element: <ResetPasswordPage /> },
+      { path: "forgot-password", element: <ForgotPasswordPage /> },
+      { path: "reset-password/:uid/:token", element: <ResetPasswordPage /> },
     ],
   },
 ]);
@@ -96,5 +107,5 @@ createRoot(document.getElementById("root")).render(
         <RouterProvider router={router} />
       </GoogleOAuthProvider>
     </AuthProvider>
-  </StrictMode>
+  </StrictMode>,
 );
