@@ -244,6 +244,23 @@
   text-decoration: underline;
 }
 
+.auth-form input.input-error {
+  border-color: #ef4444;
+  background: #fff5f5;
+}
+
+.auth-form input.input-error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15);
+}
+
+.form-error {
+  color: #ef4444;
+  font-size: 12px;
+  margin: -8px 0 10px;
+  text-align: left;
+}
+
 @media (max-width: 480px) {
   .login-page {
     padding: 16px;

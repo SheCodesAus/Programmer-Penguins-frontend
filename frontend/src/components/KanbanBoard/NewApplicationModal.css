@@ -77,6 +77,26 @@
   animation: slideUp 0.2s ease-out;
 }
 
+.new-app-modal__form input.input-error,
+.new-app-modal__form select.input-error {
+  border-color: #ef4444;
+  background: #fff5f5;
+}
+
+.new-app-modal__form input.input-error:focus,
+.new-app-modal__form select.input-error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+.form-error {
+  color: #ef4444;
+  font-size: 12px;
+  margin: -2px 0 0;
+  text-align: left;
+  font-weight: 500;
+}
+
 @keyframes slideUp {
   from {
     transform: translateY(20px);

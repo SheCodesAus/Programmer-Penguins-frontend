@@ -29,15 +29,11 @@ const EMPTY_FORM = {
 function cleanFormData(form) {
   return {
     ...form,
-
     status: form.status || "FOUND",
-
     date_posted: form.date_posted || null,
     date_applied: form.date_applied || null,
-
     salary_min: form.salary_min === "" ? null : form.salary_min,
     salary_max: form.salary_max === "" ? null : form.salary_max,
-
     source_platform: form.source_platform || "",
     source_details:
       form.source_platform === "OTHER" ? form.source_details : "",
@@ -51,6 +47,7 @@ export default function NewApplicationModal({
   onCreate,
 }) {
   const [form, setForm] = useState(EMPTY_FORM);
+  const [formErrors, setFormErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [jobLink, setJobLink] = useState("");
@@ -59,6 +56,7 @@ export default function NewApplicationModal({
   useEffect(() => {
     if (isOpen) {
       setForm({ ...EMPTY_FORM, status: defaultStatus || "FOUND" });
+      setFormErrors({});
       setError(null);
       setJobLink("");
       setSubmitting(false);
@@ -70,7 +68,9 @@ export default function NewApplicationModal({
 
   function handleChange(e) {
     const { name, value } = e.target;
+
     setForm((prev) => ({ ...prev, [name]: value }));
+    setFormErrors((prev) => ({ ...prev, [name]: "" }));
   }
 
   function handleJobLinkDrop(e) {
@@ -111,6 +111,12 @@ export default function NewApplicationModal({
         currency: data.currency || prev.currency,
         location: data.location || prev.location,
       }));
+
+      setFormErrors((prev) => ({
+        ...prev,
+        job_title: "",
+        company_name: "",
+      }));
     } catch {
       setError("Could not extract job details from this link.");
     } finally {
@@ -120,8 +126,25 @@ export default function NewApplicationModal({
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setSubmitting(true);
     setError(null);
+
+    const errors = {};
+
+    if (!form.job_title.trim()) {
+      errors.job_title = "Please enter a job title.";
+    }
+
+    if (!form.company_name.trim()) {
+      errors.company_name = "Please enter a company name.";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    setFormErrors({});
+    setSubmitting(true);
 
     try {
       const payload = cleanFormData(form);
@@ -136,7 +159,7 @@ export default function NewApplicationModal({
   }
 
   return (
-    <div className="new-app-modal__backdrop" onClick={onClose}>
+    <div className="new-app-modal__backdrop">
       <div className="new-app-modal" onClick={(e) => e.stopPropagation()}>
         <div className="new-app-modal__header">
           <h2>New application</h2>
@@ -144,12 +167,17 @@ export default function NewApplicationModal({
             className="new-app-modal__close"
             onClick={onClose}
             aria-label="Close dialog"
+            type="button"
           >
             ×
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="new-app-modal__form">
+        <form
+          onSubmit={handleSubmit}
+          className="new-app-modal__form"
+          noValidate
+        >
           <div
             className="new-app-modal__link-drop"
             onDrop={handleJobLinkDrop}
@@ -195,22 +223,28 @@ export default function NewApplicationModal({
           <label>
             <span>Job title *</span>
             <input
+              className={formErrors.job_title ? "input-error" : ""}
               name="job_title"
               value={form.job_title || ""}
               onChange={handleChange}
-              required
               autoFocus
             />
+            {formErrors.job_title && (
+              <p className="form-error">{formErrors.job_title}</p>
+            )}
           </label>
 
           <label>
             <span>Company *</span>
             <input
+              className={formErrors.company_name ? "input-error" : ""}
               name="company_name"
               value={form.company_name || ""}
               onChange={handleChange}
-              required
             />
+            {formErrors.company_name && (
+              <p className="form-error">{formErrors.company_name}</p>
+            )}
           </label>
 
           <label>
