@@ -51,6 +51,23 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "archive",
+        element: (
+          <ProtectedRoute>
+            <ArchivePage />
+          </ProtectedRoute>
+        ),
+      },
+
+      {
+        path: "trash",
+        element: (
+          <ProtectedRoute>
+            <TrashPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "profile",
         element: (
           <ProtectedRoute>

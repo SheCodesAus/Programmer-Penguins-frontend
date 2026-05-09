@@ -7,6 +7,7 @@ import { getMotivationMessage } from "../../utils/motivationMessages";
 import ConfirmModal from "../common/ConfirmModal";
 import { deleteApplication,  updateApplicationInterest } from "../../api/applications";
 import { Filter } from "lucide-react";
+import { Link } from "react-router-dom";
 import "./KanbanBoard.css";
 
 export default function KanbanBoard() {
@@ -28,6 +29,7 @@ export default function KanbanBoard() {
   const [addingToColumn, setAddingToColumn] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [interestFilter, setInterestFilter] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
 
   function showToast(messageObject) {
     setToastMessage(messageObject);
@@ -112,12 +114,25 @@ export default function KanbanBoard() {
     );
   }
 
+  function filterCardsBySearch(cards) {
+    if (!searchQuery.trim()) return cards;
+
+    const query = searchQuery.toLowerCase();
+
+    return cards.filter((card) => {
+      return (
+        card.job_title?.toLowerCase().includes(query) ||
+        card.company_name?.toLowerCase().includes(query)
+      );
+    });
+  }
+
   return (
     <>
     <div className="kanban-board__interest-filter">
       <div className="kanban-board__filter-icon-wrapper">
         <Filter className="kanban-board__filter-icon" size={18} />
-        <span className="kanban-board__tooltip">Filter by interest</span>
+        <span className="kanban-board__filter-tooltip">Filter by interest</span>
       </div>
 
       <div className="kanban-board__filter-hearts">
@@ -138,6 +153,30 @@ export default function KanbanBoard() {
         ))}
       </div>
 
+      <input
+        type="text"
+        className="kanban-board__search"
+        placeholder="Search by company or job title..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
+
+      <div className="kanban-board__actions">
+        <Link to="/archive" className="kanban-board__icon-tooltip">
+          📦
+          <span className="kanban-board__icon-tooltip-text">
+            Archived applications
+          </span>
+        </Link>
+
+        <Link to="/trash" className="kanban-board__icon-tooltip">
+          🗑
+          <span className="kanban-board__icon-tooltip-text">
+            Deleted applications
+          </span>
+        </Link>
+      </div>
+
       {interestFilter > 0 && (
         <button
           type="button"
@@ -154,7 +193,9 @@ export default function KanbanBoard() {
           <KanbanColumn
             key={col.id}
             column={col}
-            cards={filterCardsByInterest(grouped[col.id] || [])}
+            cards={filterCardsBySearch(
+              filterCardsByInterest(grouped[col.id] || [])
+            )}
             accentColor={COLUMN_ACCENT[col.id]}
             onDragStart={handleDragStart}
             onDrop={handleDropWithToast}

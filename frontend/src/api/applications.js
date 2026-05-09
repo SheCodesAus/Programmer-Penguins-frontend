@@ -68,3 +68,23 @@ export async function updateApplicationInterest(id, interestLevel) {
     body: JSON.stringify({ interest_level: interestLevel }),
   });
 }
+
+export async function fetchArchivedApplications() {
+  return apiFetch(`${APPLICATIONS_PATH}/archived/`);
+}
+
+export async function fetchDeletedApplications() {
+  return apiFetch(`${APPLICATIONS_PATH}/deleted/`);
+}
+
+export async function archiveApplication(id) {
+  return apiFetch(`${APPLICATIONS_PATH}/${id}/archive/`, {
+    method: "PATCH",
+  });
+}
+
+export async function restoreApplication(id) {
+  return apiFetch(`${APPLICATIONS_PATH}/${id}/restore/`, {
+    method: "PATCH",
+  });
+}
