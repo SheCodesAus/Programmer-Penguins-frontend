@@ -65,18 +65,12 @@ export async function requestPasswordReset(email) {
     body: JSON.stringify({ email }),
   });
 
+  const data = await response.json();
+
   if (!response.ok) {
-    let errorMessage = "Password reset failed.";
-    try {
-      const data = await response.json();
-      errorMessage = data.detail || data.email || errorMessage;
-    } catch {
-      errorMessage = `Error ${response.status}: ${response.statusText}`;
-    }
-    throw new Error(errorMessage);
+    throw new Error(data.detail || data.email || "Password reset failed.");
   }
 
-  const data = await response.json();
   return data;
 }
 
@@ -89,17 +83,11 @@ export async function confirmPasswordReset({ uid, token, password }) {
     body: JSON.stringify({ uid, token, password }),
   });
 
+  const data = await response.json();
+
   if (!response.ok) {
-    let errorMessage = "Password reset failed.";
-    try {
-      const data = await response.json();
-      errorMessage = data.detail || "Password reset failed.";
-    } catch {
-      errorMessage = `Error ${response.status}: ${response.statusText}`;
-    }
-    throw new Error(errorMessage);
+    throw new Error(data.detail || "Password reset failed.");
   }
 
-  const data = await response.json();
   return data;
 }
