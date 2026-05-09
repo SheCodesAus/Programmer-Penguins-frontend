@@ -5,7 +5,7 @@ import NewApplicationModal from "./NewApplicationModal";
 import MotivationToast from "../MotivationToast";
 import { getMotivationMessage } from "../../utils/motivationMessages";
 import ConfirmModal from "../common/ConfirmModal";
-import { deleteApplication,  updateApplicationInterest } from "../../api/applications";
+import { deleteApplication, updateApplicationInterest } from "../../api/applications";
 import { Filter } from "lucide-react";
 import { Link } from "react-router-dom";
 import "./KanbanBoard.css";
@@ -74,9 +74,7 @@ export default function KanbanBoard() {
   }
 
   if (loading) {
-    return (
-      <div className="kanban-board__loading">Loading your applications…</div>
-    );
+    return <div className="kanban-board__loading">Loading your applications…</div>;
   }
 
   if (error) {
@@ -101,7 +99,7 @@ export default function KanbanBoard() {
 
     try {
       await updateApplicationInterest(cardId, interestLevel);
-    } catch (err) {
+    } catch {
       reload();
     }
   }
@@ -109,9 +107,7 @@ export default function KanbanBoard() {
   function filterCardsByInterest(cards) {
     if (interestFilter === 0) return cards;
 
-    return cards.filter(
-      (card) => (card.interest_level || 0) === interestFilter
-    );
+    return cards.filter((card) => (card.interest_level || 0) === interestFilter);
   }
 
   function filterCardsBySearch(cards) {
@@ -127,66 +123,138 @@ export default function KanbanBoard() {
     });
   }
 
+  const allApplications = COLUMNS.flatMap((col) => grouped[col.id] || []);
+
+  const totalApplications = allApplications.length;
+
+  const appliedApplications = allApplications.filter((app) =>
+    ["APPLIED", "INTERVIEWING", "OFFER", "REJECTED", "WITHDRAWN"].includes(app.status)
+  ).length;
+
+  const interviewingApplications = allApplications.filter(
+    (app) => app.status === "INTERVIEWING"
+  ).length;
+
+  const offerApplications = allApplications.filter(
+    (app) => app.status === "OFFER"
+  ).length;
+
+  const interviewRate =
+    appliedApplications > 0
+      ? Math.round((interviewingApplications / appliedApplications) * 100)
+      : 0;
+
+  const offerRate =
+    appliedApplications > 0
+      ? Math.round((offerApplications / appliedApplications) * 100)
+      : 0;
+
+  const statusCounts = COLUMNS.map((col) => ({
+    id: col.id,
+    label: col.label,
+    count: grouped[col.id]?.length || 0,
+  }));
+
+
   return (
     <>
-    <div className="kanban-board__interest-filter">
-      <div className="kanban-board__filter-icon-wrapper">
-        <Filter className="kanban-board__filter-icon" size={18} />
-        <span className="kanban-board__filter-tooltip">Filter by interest</span>
-      </div>
+      <div className="kanban-board__interest-filter">
+        <div className="kanban-board__filter-icon-wrapper">
+          <Filter className="kanban-board__filter-icon" size={18} />
+          <span className="kanban-board__filter-tooltip">Filter by interest</span>
+        </div>
 
-      <div className="kanban-board__filter-hearts">
-        {[1, 2, 3].map((level) => (
+        <div className="kanban-board__filter-hearts">
+          {[1, 2, 3].map((level) => (
+            <button
+              key={level}
+              type="button"
+              className={`kanban-board__filter-heart ${
+                interestFilter === level ? "active" : ""
+              }`}
+              onClick={() =>
+                setInterestFilter(interestFilter === level ? 0 : level)
+              }
+              aria-label={`Show applications with ${level} hearts`}
+            >
+              ♥
+            </button>
+          ))}
+        </div>
+
+        {interestFilter > 0 && (
           <button
-            key={level}
             type="button"
-            className={`kanban-board__filter-heart ${
-              interestFilter === level ? "active" : ""
-            }`}
-            onClick={() =>
-              setInterestFilter(interestFilter === level ? 0 : level)
-            }
-            aria-label={`Show applications with ${level} hearts`}
+            className="kanban-board__filter-clear"
+            onClick={() => setInterestFilter(0)}
           >
-            ♥
+            Clear
           </button>
-        ))}
+        )}
+
+        <input
+          type="text"
+          className="kanban-board__search"
+          placeholder="Search by company or job title..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+
+        <div className="kanban-board__actions">
+          <Link to="/archive" className="kanban-board__icon-tooltip">
+            📦
+            <span className="kanban-board__icon-tooltip-text">
+              Archived applications
+            </span>
+          </Link>
+
+          <Link to="/trash" className="kanban-board__icon-tooltip">
+            🗑
+            <span className="kanban-board__icon-tooltip-text">
+              Deleted applications
+            </span>
+          </Link>
+        </div>
+
+        <div className="kanban-board__stats-card">
+          <div className="kanban-board__stat-tooltip">
+            <span className="kanban-board__stats-total">{totalApplications}</span>
+            <small>Total</small>
+            <span className="kanban-board__icon-tooltip-text">
+              Total active applications on your Kanban board
+            </span>
+          </div>
+
+          <div className="kanban-board__stats-divider" />
+
+          <div className="kanban-board__status-counts">
+            {statusCounts.map((status) => (
+              <div key={status.id} className="kanban-board__status-count">
+                <span>{status.count}</span>
+                <small>{status.label}</small>
+              </div>
+            ))}
+          </div>
+
+          <div className="kanban-board__stats-divider" />
+
+          <div className="kanban-board__stat-tooltip">
+            <span className="kanban-board__stats-rate">{interviewRate}%</span>
+            <small>Interview</small>
+            <span className="kanban-board__icon-tooltip-text">
+              Interview rate based on applications that moved past Found
+            </span>
+          </div>
+
+          <div className="kanban-board__stat-tooltip">
+            <span className="kanban-board__stats-rate">{offerRate}%</span>
+            <small>Offer</small>
+            <span className="kanban-board__icon-tooltip-text">
+              Offer rate based on applications that moved past Found
+            </span>
+          </div>
+        </div>
       </div>
-
-      <input
-        type="text"
-        className="kanban-board__search"
-        placeholder="Search by company or job title..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
-
-      <div className="kanban-board__actions">
-        <Link to="/archive" className="kanban-board__icon-tooltip">
-          📦
-          <span className="kanban-board__icon-tooltip-text">
-            Archived applications
-          </span>
-        </Link>
-
-        <Link to="/trash" className="kanban-board__icon-tooltip">
-          🗑
-          <span className="kanban-board__icon-tooltip-text">
-            Deleted applications
-          </span>
-        </Link>
-      </div>
-
-      {interestFilter > 0 && (
-        <button
-          type="button"
-          className="kanban-board__filter-clear"
-          onClick={() => setInterestFilter(0)}
-        >
-          Clear
-        </button>
-      )}
-    </div>
 
       <div className="kanban-board">
         {COLUMNS.map((col) => (
