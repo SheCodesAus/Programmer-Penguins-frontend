@@ -14,6 +14,7 @@ export default function KanbanColumn({
   onDeleteRequest,
   onInterestChange,
   interestFilter,
+  restoredBadges,
 })  {
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -70,6 +71,7 @@ export default function KanbanColumn({
             onDeleteRequest={onDeleteRequest}
             onInterestChange={onInterestChange}
             interestFilter={interestFilter}
+            restoreBadge={restoredBadges?.[String(app.id)]}
           />
         ))}
 

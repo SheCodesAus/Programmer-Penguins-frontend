@@ -4,6 +4,7 @@ import {
   fetchDeletedApplications,
   restoreApplication,
 } from "../api/applications";
+import { markApplicationRestored } from "../utils/restoredApplications";
 import "./ArchiveTrashPage.css";
 
 export default function TrashPage() {
@@ -34,6 +35,7 @@ export default function TrashPage() {
   async function handleRestore(id) {
     try {
       await restoreApplication(id);
+      markApplicationRestored(id, "trash");
       setApplications((prev) => prev.filter((app) => app.id !== id));
     } catch (err) {
       setError(err.message || "Could not restore application.");

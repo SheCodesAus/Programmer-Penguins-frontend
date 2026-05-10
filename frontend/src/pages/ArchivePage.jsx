@@ -5,6 +5,7 @@ import {
   restoreApplication,
 } from "../api/applications";
 import { apiFetch } from "../api/auth";
+import { markApplicationRestored } from "../utils/restoredApplications";
 import "./ArchiveTrashPage.css";
 
 export default function ArchivePage() {
@@ -63,6 +64,7 @@ export default function ArchivePage() {
   async function handleRestore(id) {
     try {
       await restoreApplication(id);
+      markApplicationRestored(id, "archive");
       setApplications((prev) => prev.filter((app) => app.id !== id));
     } catch (err) {
       setError(err.message || "Could not restore application.");

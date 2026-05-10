@@ -20,21 +20,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { COLUMNS } from "../../hooks/useKanban";
+import { getCompanyInitials, getCompanyLogoUrl } from "../../utils/companyLogo";
 import "./KanbanCard.css";
-
-// Derive a favicon URL from a company name.
-// We use Google's public favicon service as a free, zero-config solution.
-// Falls back to a plain coloured initial if the image fails to load.
-function getFaviconUrl(application) {
-  if (!application.job_url) return null;
-
-  try {
-    const url = new URL(application.job_url);
-    return `https://www.google.com/s2/favicons?domain=${url.hostname}&sz=40`;
-  } catch {
-    return null;
-  }
-}
 
 // Format a date string (ISO "2025-04-15") to something readable ("15 Apr 2025").
 // Returns an empty string if the date is null/undefined.
@@ -57,10 +44,11 @@ export default function KanbanCard({
   onDeleteRequest,
   onInterestChange,
   interestFilter,
+  restoreBadge,
 }) {
   const navigate = useNavigate();
   const [isDragging, setIsDragging] = useState(false);
-  const [imgError, setImgError] = useState(false);
+  const [failedLogoUrl, setFailedLogoUrl] = useState(null);
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
 
   const interestLevel = application.interest_level ?? 0;
@@ -75,14 +63,7 @@ export default function KanbanCard({
     setIsDragging(false);
   }
 
-  // Initials fallback when favicon fails to load
-  const initials =
-    application.company_name
-      ?.split(" ")
-      .slice(0, 2)
-      .map((w) => w[0])
-      .join("")
-      .toUpperCase() || "?";
+  const initials = getCompanyInitials(application.company_name);
 
   function handleClick() {
   navigate(`/job-application/${application.id}`);
@@ -93,13 +74,16 @@ export default function KanbanCard({
     setStatusMenuOpen(false);
   }
 
-  const faviconUrl = getFaviconUrl(application);
+  const faviconUrl = getCompanyLogoUrl(application);
+  const showLogo = faviconUrl && failedLogoUrl !== faviconUrl;
 
 return (
   <div
     className={`kanban-card kanban-card--interest-${interestLevel} ${
       isHidden ? "kanban-card--hidden" : ""
-    } ${isDragging ? "kanban-card--dragging" : ""}`}
+    } ${isDragging ? "kanban-card--dragging" : ""} ${
+      restoreBadge ? "kanban-card--has-restore-badge" : ""
+    }`}
     style={{ "--accent": accentColor }}
     draggable
     onDragStart={handleDragStart}
@@ -109,7 +93,7 @@ return (
 
       {/* Company logo */}
       <div className="kanban-card__logo">
-        {imgError || !faviconUrl ? (
+        {!showLogo ? (
           <div
             className="kanban-card__logo-fallback"
             style={{ background: accentColor }}
@@ -120,13 +104,20 @@ return (
           <img
             src={faviconUrl}
             alt={`${application.company_name} logo`}
-            onError={() => setImgError(true)}
+            onError={() => setFailedLogoUrl(faviconUrl)}
           />
         )}
       </div>
 
       {/* Text content */}
       <div className="kanban-card__body">
+        {restoreBadge && (
+          <span
+            className={`kanban-card__restore-badge kanban-card__restore-badge--${restoreBadge.source}`}
+          >
+            {restoreBadge.label}
+          </span>
+        )}
         <p className="kanban-card__title">{application.job_title}</p>
         <p className="kanban-card__company">{application.company_name}</p>
         <p className="kanban-card__date">

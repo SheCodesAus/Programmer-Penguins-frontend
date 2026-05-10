@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ConfirmModal from "../components/common/ConfirmModal";
 import "./JobApplicationPage.css";
 import { apiFetch } from "../api/auth";
+import { getCompanyInitials, getCompanyLogoUrl } from "../utils/companyLogo";
 
 const STAGES = ["FOUND", "APPLIED", "INTERVIEWING", "OFFER", "REJECTED", "WITHDRAWN"];
 
@@ -15,13 +16,8 @@ const STAGE_LABELS = {
     WITHDRAWN: "Withdrawn"
 };
 
-function getFaviconUrl(companyName = "") {
-    const slug = companyName.toLowerCase().replace(/\s+/g, "");
-    return `https://www.google.com/s2/favicons?domain=${slug}.com&sz=64`;
-}
-
 function JobApplicationPage() {
-    const [imgError, setImgError] = useState(false);
+    const [failedLogoUrl, setFailedLogoUrl] = useState(null);
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -96,10 +92,6 @@ function JobApplicationPage() {
 
         fetchData();
     }, [id]);
-
-    useEffect(() => {
-        setImgError(false);
-    }, [job?.company_name]);
 
     const handleAddContact = async () => {
         const errors = {};
@@ -207,6 +199,9 @@ function JobApplicationPage() {
     if (!job) return <p className="loading">Application not found</p>;
 
     const currentStageIndex = STAGES.indexOf(job.status);
+    const companyLogoUrl = getCompanyLogoUrl(job);
+    const companyInitials = getCompanyInitials(job.company_name);
+    const showCompanyLogo = companyLogoUrl && failedLogoUrl !== companyLogoUrl;
 
     return (
         <div className="page-container">
@@ -236,16 +231,16 @@ function JobApplicationPage() {
 
             <div className="grid-top">
                 <div className="logo-box">
-                    {!imgError ? (
+                    {showCompanyLogo ? (
                         <img
-                            src={getFaviconUrl(job.company_name)}
+                            src={companyLogoUrl}
                             alt={job.company_name}
                             className="company-favicon"
-                            onError={() => setImgError(true)}
+                            onError={() => setFailedLogoUrl(companyLogoUrl)}
                         />
                     ) : (
                         <div className="logo-placeholder">
-                            {job.company_name?.slice(0, 2).toUpperCase()}
+                            {companyInitials}
                         </div>
                     )}
                 </div>

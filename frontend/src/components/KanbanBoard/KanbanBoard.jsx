@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useKanban, { COLUMNS, COLUMN_ACCENT } from "../../hooks/useKanban";
 import KanbanColumn from "./KanbanColumn";
 import NewApplicationModal from "./NewApplicationModal";
 import MotivationToast from "../MotivationToast";
 import { getMotivationMessage } from "../../utils/motivationMessages";
+import { getRestoredApplicationBadges } from "../../utils/restoredApplications";
 import ConfirmModal from "../common/ConfirmModal";
 import { deleteApplication, updateApplicationInterest } from "../../api/applications";
 import { Filter } from "lucide-react";
@@ -30,6 +31,17 @@ export default function KanbanBoard() {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [interestFilter, setInterestFilter] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [restoredBadges, setRestoredBadges] = useState(() =>
+    getRestoredApplicationBadges()
+  );
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setRestoredBadges(getRestoredApplicationBadges());
+    }, 30000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
 
   function showToast(messageObject) {
     setToastMessage(messageObject);
@@ -155,65 +167,66 @@ export default function KanbanBoard() {
     count: grouped[col.id]?.length || 0,
   }));
 
-
   return (
     <>
-      <div className="kanban-board__interest-filter">
-        <div className="kanban-board__filter-icon-wrapper">
-          <Filter className="kanban-board__filter-icon" size={18} />
-          <span className="kanban-board__filter-tooltip">Filter by interest</span>
-        </div>
+      <div className="kanban-board__toolbar">
+        <div className="kanban-board__interest-filter">
+          <div className="kanban-board__filter-icon-wrapper">
+            <Filter className="kanban-board__filter-icon" size={18} />
+            <span className="kanban-board__filter-tooltip">Filter by interest</span>
+          </div>
 
-        <div className="kanban-board__filter-hearts">
-          {[1, 2, 3].map((level) => (
+          <div className="kanban-board__filter-hearts">
+            {[1, 2, 3].map((level) => (
+              <button
+                key={level}
+                type="button"
+                className={`kanban-board__filter-heart ${
+                  interestFilter === level ? "active" : ""
+                }`}
+                onClick={() =>
+                  setInterestFilter(interestFilter === level ? 0 : level)
+                }
+                aria-label={`Show applications with ${level} hearts`}
+              >
+                ♥
+              </button>
+            ))}
+          </div>
+
+          {interestFilter > 0 && (
             <button
-              key={level}
               type="button"
-              className={`kanban-board__filter-heart ${
-                interestFilter === level ? "active" : ""
-              }`}
-              onClick={() =>
-                setInterestFilter(interestFilter === level ? 0 : level)
-              }
-              aria-label={`Show applications with ${level} hearts`}
+              className="kanban-board__filter-clear"
+              onClick={() => setInterestFilter(0)}
             >
-              ♥
+              Clear
             </button>
-          ))}
-        </div>
+          )}
 
-        {interestFilter > 0 && (
-          <button
-            type="button"
-            className="kanban-board__filter-clear"
-            onClick={() => setInterestFilter(0)}
-          >
-            Clear
-          </button>
-        )}
+          <input
+            type="text"
+            className="kanban-board__search"
+            placeholder="Search by company or job title..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
 
-        <input
-          type="text"
-          className="kanban-board__search"
-          placeholder="Search by company or job title..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+          <div className="kanban-board__actions">
+            <Link to="/archive" className="kanban-board__icon-tooltip">
+              📦
+              <span className="kanban-board__icon-tooltip-text">
+                Archived applications
+              </span>
+            </Link>
 
-        <div className="kanban-board__actions">
-          <Link to="/archive" className="kanban-board__icon-tooltip">
-            📦
-            <span className="kanban-board__icon-tooltip-text">
-              Archived applications
-            </span>
-          </Link>
-
-          <Link to="/trash" className="kanban-board__icon-tooltip">
-            🗑
-            <span className="kanban-board__icon-tooltip-text">
-              Deleted applications
-            </span>
-          </Link>
+            <Link to="/trash" className="kanban-board__icon-tooltip">
+              🗑
+              <span className="kanban-board__icon-tooltip-text">
+                Deleted applications
+              </span>
+            </Link>
+          </div>
         </div>
 
         <div className="kanban-board__stats-card">
@@ -273,6 +286,7 @@ export default function KanbanBoard() {
             onDeleteRequest={setDeleteTarget}
             onInterestChange={handleInterestChange}
             interestFilter={interestFilter}
+            restoredBadges={restoredBadges}
           />
         ))}
       </div>
