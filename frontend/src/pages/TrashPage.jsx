@@ -42,6 +42,17 @@ export default function TrashPage() {
     }
   }
 
+  function openApplication(id) {
+    navigate(`/job-application/${id}`);
+  }
+
+  function handleCardKeyDown(event, id) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openApplication(id);
+    }
+  }
+
   return (
     <main className="archive-trash-page">
       <div className="archive-trash-page__header">
@@ -67,20 +78,43 @@ export default function TrashPage() {
 
       <div className="archive-trash-page__list">
         {applications.map((app) => (
-          <article className="archive-trash-card" key={app.id}>
+          <article
+            className="archive-trash-card"
+            key={app.id}
+            role="button"
+            tabIndex={0}
+            onClick={() => openApplication(app.id)}
+            onKeyDown={(event) => handleCardKeyDown(event, app.id)}
+          >
             <div>
               <h2>{app.job_title}</h2>
               <p>{app.company_name}</p>
               <span>{app.status_display || app.status}</span>
             </div>
 
-            <button
-              className="primary-btn"
-              type="button"
-              onClick={() => handleRestore(app.id)}
-            >
-              Restore
-            </button>
+            <div className="archive-trash-card__actions">
+              <button
+                className="secondary-btn"
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  openApplication(app.id);
+                }}
+              >
+                View details
+              </button>
+
+              <button
+                className="primary-btn"
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleRestore(app.id);
+                }}
+              >
+                Restore
+              </button>
+            </div>
           </article>
         ))}
       </div>

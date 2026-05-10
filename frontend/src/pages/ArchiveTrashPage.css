@@ -74,6 +74,12 @@
   gap: 16px;
   align-items: center;
   box-shadow: 0 2px 12px rgba(148, 163, 184, 0.12);
+  cursor: pointer;
+}
+
+.archive-trash-card:focus-visible {
+  outline: 3px solid rgba(22, 113, 238, 0.25);
+  outline-offset: 3px;
 }
 
 .archive-trash-card h2 {
@@ -96,6 +102,13 @@
   font-size: 0.85rem;
   color: var(--primary);
   font-weight: 700;
+}
+
+.archive-trash-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .archive-trash-page__message,
@@ -170,8 +183,15 @@
   }
 
   .archive-trash-card .primary-btn,
+  .archive-trash-card .secondary-btn,
   .archive-trash-page__header .secondary-btn {
     width: 100%;
     justify-content: center;
+  }
+
+  .archive-trash-card__actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
   }
 }
