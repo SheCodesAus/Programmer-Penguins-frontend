@@ -88,3 +88,10 @@ export async function restoreApplication(id) {
     method: "PATCH",
   });
 }
+
+export async function updateApplication(id, data) {
+  return apiFetch(`${APPLICATIONS_PATH}/${id}/`, {
+    method: "PATCH",
+    body: JSON.stringify(data),
+  });
+}
