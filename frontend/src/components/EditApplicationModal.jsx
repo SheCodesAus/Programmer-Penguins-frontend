@@ -2,24 +2,20 @@ import { useState, useEffect } from "react";
 import { updateApplication } from "../api/applications.js";
 
 const STATUS_CHOICES = [
-  { value: "bookmarked", label: "Bookmarked" },
-  { value: "applying", label: "Applying" },
-  { value: "applied", label: "Applied" },
-  { value: "interviewing", label: "Interviewing" },
-  { value: "offered", label: "Offered" },
-  { value: "rejected", label: "Rejected" },
-  { value: "withdrawn", label: "Withdrawn" },
-  { value: "accepted", label: "Accepted" },
+  { value: "FOUND", label: "Found" },
+  { value: "APPLIED", label: "Applied" },
+  { value: "INTERVIEWING", label: "Interviewing" },
+  { value: "OFFER", label: "Offer" },
+  { value: "REJECTED", label: "Rejected" },
+  { value: "WITHDRAWN", label: "Withdrawn" },
 ];
 
 const SOURCE_PLATFORM_CHOICES = [
-  { value: "", label: "— None —" },
-  { value: "linkedin", label: "LinkedIn" },
-  { value: "indeed", label: "Indeed" },
-  { value: "glassdoor", label: "Glassdoor" },
-  { value: "company_website", label: "Company Website" },
-  { value: "referral", label: "Referral" },
-  { value: "other", label: "Other" },
+  { value: "", label: "Not specified" },
+  { value: "SEEK", label: "Seek" },
+  { value: "LINKEDIN", label: "LinkedIn" },
+  { value: "INDEED", label: "Indeed" },
+  { value: "OTHER", label: "Other" },
 ];
 
 const INTEREST_LEVEL_CHOICES = [
@@ -46,8 +42,8 @@ export default function EditApplicationModal({ application, onClose, onSaved }) 
     salary_max: "",
     currency: "AUD",
     location: "",
-    status: "applied",
-    interest_level: 3,
+    status: "FOUND",
+    interest_level: 0,
     is_active: true,
   });
 
@@ -68,8 +64,8 @@ export default function EditApplicationModal({ application, onClose, onSaved }) 
         salary_max: application.salary_max ?? "",
         currency: application.currency || "AUD",
         location: application.location || "",
-        status: application.status || "applied",
-        interest_level: application.interest_level ?? 3,
+        status: application.status || "FOUND",
+        interest_level: application.interest_level ?? 0,
         is_active: application.is_active ?? true,
       });
     }
