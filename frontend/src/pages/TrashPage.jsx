@@ -4,6 +4,7 @@ import {
   fetchDeletedApplications,
   restoreApplication,
 } from "../api/applications";
+import { markApplicationRestored } from "../utils/restoredApplications";
 import "./ArchiveTrashPage.css";
 
 export default function TrashPage() {
@@ -34,9 +35,21 @@ export default function TrashPage() {
   async function handleRestore(id) {
     try {
       await restoreApplication(id);
+      markApplicationRestored(id, "trash");
       setApplications((prev) => prev.filter((app) => app.id !== id));
     } catch (err) {
       setError(err.message || "Could not restore application.");
+    }
+  }
+
+  function openApplication(id) {
+    navigate(`/job-application/${id}`);
+  }
+
+  function handleCardKeyDown(event, id) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openApplication(id);
     }
   }
 
@@ -65,20 +78,43 @@ export default function TrashPage() {
 
       <div className="archive-trash-page__list">
         {applications.map((app) => (
-          <article className="archive-trash-card" key={app.id}>
+          <article
+            className="archive-trash-card"
+            key={app.id}
+            role="button"
+            tabIndex={0}
+            onClick={() => openApplication(app.id)}
+            onKeyDown={(event) => handleCardKeyDown(event, app.id)}
+          >
             <div>
               <h2>{app.job_title}</h2>
               <p>{app.company_name}</p>
               <span>{app.status_display || app.status}</span>
             </div>
 
-            <button
-              className="primary-btn"
-              type="button"
-              onClick={() => handleRestore(app.id)}
-            >
-              Restore
-            </button>
+            <div className="archive-trash-card__actions">
+              <button
+                className="secondary-btn"
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  openApplication(app.id);
+                }}
+              >
+                View details
+              </button>
+
+              <button
+                className="primary-btn"
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleRestore(app.id);
+                }}
+              >
+                Restore
+              </button>
+            </div>
           </article>
         ))}
       </div>

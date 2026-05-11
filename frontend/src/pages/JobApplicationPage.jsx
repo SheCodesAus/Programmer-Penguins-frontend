@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./JobApplicationPage.css";
 import { apiFetch } from "../api/auth";
+import { getCompanyInitials, getCompanyLogoUrl } from "../utils/companyLogo";
 
 function getFaviconUrl(companyName = "") {
     const slug = companyName.toLowerCase().replace(/\s+/g, "");
@@ -9,7 +10,7 @@ function getFaviconUrl(companyName = "") {
 }
 
 function JobApplicationPage() {
-    const [imgError, setImgError] = useState(false);
+    const [failedLogoUrl, setFailedLogoUrl] = useState(null);
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -145,16 +146,16 @@ function JobApplicationPage() {
 
             <div className="grid-top">
                 <div className="logo-box">
-                    {!imgError ? (
+                    {showCompanyLogo ? (
                         <img
-                            src={getFaviconUrl(job.company_name)}
+                            src={companyLogoUrl}
                             alt={job.company_name}
                             className="company-favicon"
-                            onError={() => setImgError(true)}
+                            onError={() => setFailedLogoUrl(companyLogoUrl)}
                         />
                     ) : (
                         <div className="logo-placeholder">
-                            {job.company_name?.slice(0, 2).toUpperCase()}
+                            {companyInitials}
                         </div>
                     )}
                 </div>
