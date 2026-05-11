@@ -19,6 +19,7 @@ const SOURCE_PLATFORM_CHOICES = [
 ];
 
 const INTEREST_LEVEL_CHOICES = [
+  { value: 0, label: "No interest selected" },
   { value: 1, label: "1 – Low" },
   { value: 2, label: "2 – Medium" },
   { value: 3, label: "3 – High" },
