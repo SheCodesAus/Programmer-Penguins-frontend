@@ -91,6 +91,7 @@ export default function useKanban() {
 
     try {
       await updateApplicationStatus(cardId, toColumnId);
+      await loadBoard();
     } catch (err) {
       setError(`Could not move card: ${err.message}`);
       loadBoard();
@@ -124,6 +125,7 @@ export default function useKanban() {
 
     try {
       await updateApplicationStatus(cardId, newStatus);
+      await loadBoard();
     } catch (err) {
       setError(`Could not update status: ${err.message}`);
       loadBoard();
@@ -132,19 +134,7 @@ export default function useKanban() {
 
   async function createCard(formData) {
     const newCard = await createApplication(formData);
-
-    if (!newCard?.id || !newCard?.status) {
-      await loadBoard();
-      return newCard;
-    }
-
-    setGrouped((prev) => ({
-      ...prev,
-      [newCard.status]: [
-        ...(prev[newCard.status] || []),
-        newCard,
-      ],
-    }));
+    await loadBoard();
 
     return newCard;
   }

@@ -18,7 +18,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { COLUMNS } from "../../hooks/useKanban";
 import { getCompanyInitials, getCompanyLogoUrl } from "../../utils/companyLogo";
 import "./KanbanCard.css";
@@ -32,6 +32,17 @@ function formatDate(dateStr) {
     day: "numeric",
     month: "short",
     year: "numeric",
+  });
+}
+
+function formatShortDateTime(dateStr) {
+  if (!dateStr) return "";
+
+  return new Date(dateStr).toLocaleString("en-AU", {
+    day: "numeric",
+    month: "short",
+    hour: "numeric",
+    minute: "2-digit",
   });
 }
 
@@ -76,6 +87,35 @@ export default function KanbanCard({
 
   const faviconUrl = getCompanyLogoUrl(application);
   const showLogo = faviconUrl && failedLogoUrl !== faviconUrl;
+  const taskSummary = application.task_summary || {};
+  const nextEvent = application.next_event;
+
+  function getTaskBadge() {
+    if (taskSummary.overdue_count > 0) {
+      return {
+        tone: "danger",
+        text: `${taskSummary.overdue_count} overdue`,
+      };
+    }
+
+    if (taskSummary.ready_to_apply) {
+      return {
+        tone: "success",
+        text: "Ready to apply",
+      };
+    }
+
+    if (taskSummary.open_count > 0) {
+      return {
+        tone: "neutral",
+        text: `${taskSummary.open_count} tasks`,
+      };
+    }
+
+    return null;
+  }
+
+  const taskBadge = getTaskBadge();
 
 return (
   <div
@@ -124,6 +164,31 @@ return (
           {/* Show date_applied if available, fall back to date_posted */}
           {formatDate(application.date_applied || application.date_posted)}
         </p>
+
+        {(taskBadge || nextEvent) && (
+          <div className="kanban-card__signals">
+            {taskBadge && (
+              <Link
+                className={`kanban-card__signal kanban-card__signal--${taskBadge.tone}`}
+                to={`/tasks?application=${application.id}`}
+                onClick={(event) => event.stopPropagation()}
+              >
+                {taskBadge.text}
+              </Link>
+            )}
+
+            {nextEvent && (
+              <Link
+                className="kanban-card__signal kanban-card__signal--event"
+                to={`/tasks?application=${application.id}`}
+                onClick={(event) => event.stopPropagation()}
+              >
+                {nextEvent.event_type === "INTERVIEW" ? "Interview" : "Event"}{" "}
+                {formatShortDateTime(nextEvent.starts_at)}
+              </Link>
+            )}
+          </div>
+        )}
       </div>
 
       <div

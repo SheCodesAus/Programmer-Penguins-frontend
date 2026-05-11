@@ -7,7 +7,7 @@ import { getMotivationMessage } from "../../utils/motivationMessages";
 import { getRestoredApplicationBadges } from "../../utils/restoredApplications";
 import ConfirmModal from "../common/ConfirmModal";
 import { deleteApplication, updateApplicationInterest } from "../../api/applications";
-import { Filter } from "lucide-react";
+import { ClipboardList, Filter } from "lucide-react";
 import { Link } from "react-router-dom";
 import "./KanbanBoard.css";
 
@@ -213,6 +213,13 @@ export default function KanbanBoard() {
           />
 
           <div className="kanban-board__actions">
+            <Link to="/tasks" className="kanban-board__icon-tooltip">
+              <ClipboardList size={22} strokeWidth={2.4} />
+              <span className="kanban-board__icon-tooltip-text">
+                Tasks and agenda
+              </span>
+            </Link>
+
             <Link to="/archive" className="kanban-board__icon-tooltip">
               📦
               <span className="kanban-board__icon-tooltip-text">
