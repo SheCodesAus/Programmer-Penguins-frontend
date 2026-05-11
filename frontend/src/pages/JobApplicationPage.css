@@ -298,6 +298,18 @@
   margin-top: 6px;
 }
 
+.edit-btn {
+  background: none;
+  border: none;
+  color: #cbd5e1;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.edit-btn:hover svg {
+  fill: #ef4444;
+}
+
 /* notes */
 
 .notes-card {
@@ -464,7 +476,7 @@
   background: none;
   border: none;
   color: #cbd5e1;
-  font-size: 18px;
+  font-size: 22px;
   cursor: pointer;
 }
 

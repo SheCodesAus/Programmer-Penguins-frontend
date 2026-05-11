@@ -21,6 +21,8 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import NavBar from "./components/NavBar.jsx";
 import { AuthProvider } from "./components/AuthProvider.jsx";
+import ArchivePage from "./pages/ArchivePage.jsx";
+import TrashPage from "./pages/TrashPage.jsx";
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem("token");

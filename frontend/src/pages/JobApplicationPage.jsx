@@ -3,11 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import "./JobApplicationPage.css";
 import { apiFetch } from "../api/auth";
 import { getCompanyInitials, getCompanyLogoUrl } from "../utils/companyLogo";
-
-function getFaviconUrl(companyName = "") {
-    const slug = companyName.toLowerCase().replace(/\s+/g, "");
-    return `https://www.google.com/s2/favicons?domain=${slug}.com&sz=64`;
-}
+import EditApplicationModal from "../components/EditApplicationModal";
+import { FaEdit } from "react-icons/fa";
 
 function JobApplicationPage() {
     const [failedLogoUrl, setFailedLogoUrl] = useState(null);
@@ -19,16 +16,24 @@ function JobApplicationPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const [isEditing, setIsEditing] = useState(false);
+
     const [showContactForm, setShowContactForm] = useState(false);
     const [newContact, setNewContact] = useState({
         first_name: "", last_name: "", email: "", phone: "", note: ""
     });
+    const [editingContactId, setEditingContactId] = useState(null);
 
     const [notes, setNotes] = useState([]);
     const [showNotesForm, setShowNotesForm] = useState(false);
     const [newNotes, setNewNotes] = useState({
-        title: "", notes: ""
+        title: "", note: ""
     });
+    const [editingNoteId, setEditingNoteId] = useState(null);
+
+    const companyLogoUrl = getCompanyLogoUrl(job);
+    const companyInitials = getCompanyInitials(job?.company_name);
+    const showCompanyLogo = companyLogoUrl && companyLogoUrl !== failedLogoUrl;
 
     useEffect(() => {
         async function fetchData() {
@@ -64,6 +69,20 @@ function JobApplicationPage() {
         }
     };
 
+    const handleEditContact = async () => {
+        try {
+            const updatedContact = await apiFetch(`/api/applications/contacts/${editingContactId}/`, {
+                method: "PATCH",
+                body: JSON.stringify(newContact)
+            });
+            setContacts(contacts.map(c => c.id === editingContactId ? updatedContact : c));
+            setEditingContactId(null);
+            setNewContact({ first_name: "", last_name: "", email: "", phone: "", note: "" });
+        } catch (err) {
+            alert(err.message);
+        }
+    };
+
     const handleDeleteContact = async (contactId) => {
         try {
             await apiFetch(`/api/applications/contacts/${contactId}/`, {
@@ -82,8 +101,22 @@ function JobApplicationPage() {
                 body: JSON.stringify(newNotes)
             });
             setNotes([...notes, created]);
-            setNewNotes({ title:"", notes:"" });
+            setNewNotes({ title: "", note: "" });
             setShowNotesForm(false);
+        } catch (err) {
+            alert(err.message);
+        }
+    };
+
+    const handleEditNotes = async () => {
+        try {
+            const updatedNote = await apiFetch(`/api/applications/notes/${editingNoteId}/`, {
+                method: "PATCH",
+                body: JSON.stringify(newNotes)
+            });
+            setNotes(notes.map(n => n.id === editingNoteId ? updatedNote : n));
+            setEditingNoteId(null);
+            setNewNotes({ title: "", note: "" });
         } catch (err) {
             alert(err.message);
         }
@@ -105,13 +138,6 @@ function JobApplicationPage() {
         FOUND: "Found", APPLIED: "Applied", INTERVIEWING: "Interviewing",
         OFFER: "Offer", REJECTED: "Rejected", WITHDRAWN: "Withdrawn"
     };
-    const PROGRESS_MILESTONES = [
-        { key: "created_at", label: "Found" },
-        { key: "date_applied", label: "Applied" },
-        { key: "interview_scheduled", label: "Interview scheduled" },
-        { key: "interview_completed", label: "Interview completed" },
-        { key: "offer_received", label: "Offer received" },
-    ];
 
     const formatDate = (dateStr) => {
         if (!dateStr) return "—";
@@ -123,14 +149,15 @@ function JobApplicationPage() {
     if (isLoading) return <p className="loading">Loading...</p>;
     if (error) return <p className="loading">Error: {error}</p>;
 
-
- return (
+    return (
         <div className="page-container">
             <div className="top-buttons">
                 <button className="secondary-btn" onClick={() => navigate("/dashboard")}>
                     ◀ Return to dashboard
                 </button>
-                <button className="secondary-btn">Edit</button>
+                <button className="secondary-btn" onClick={() => setIsEditing(true)}>
+                    Edit
+                </button>
             </div>
 
             <div className="progress-bar">
@@ -143,6 +170,14 @@ function JobApplicationPage() {
                     </div>
                 ))}
             </div>
+
+            {isEditing && (
+                <EditApplicationModal
+                    application={job}
+                    onClose={() => setIsEditing(false)}
+                    onSaved={(updated) => setJob(updated)}
+                />
+            )}
 
             <div className="grid-top">
                 <div className="logo-box">
@@ -159,7 +194,7 @@ function JobApplicationPage() {
                         </div>
                     )}
                 </div>
-                    <div className="info-card">
+                <div className="info-card">
                     <div className="info-grid">
                         <span className="info-label">Job title</span>
                         <span className="info-value">{job.job_title}</span>
@@ -194,91 +229,143 @@ function JobApplicationPage() {
             </div>
 
             <div className="grid-mid">
-    <div className="card">
-        <div className="card-header">
-            <span className="card-title">Contacts</span>
-            <button className="add-btn" onClick={() => setShowContactForm(!showContactForm)}>+</button>
-        </div>
+                {/* Contacts card */}
+                <div className="card">
+                    <div className="card-header">
+                        <span className="card-title">Contacts</span>
+                        <button className="add-btn" onClick={() => {
+                            setShowContactForm(!showContactForm);
+                            setEditingContactId(null);
+                            setNewContact({ first_name: "", last_name: "", email: "", phone: "", note: "" });
+                        }}>+</button>
+                    </div>
 
-        {contacts.map(contact => (
-            <div className="contact-item" key={contact.id}>
-                <div className="avatar">
-                    {contact.first_name?.slice(0, 1)}{contact.last_name?.slice(0, 1)}
+                    {contacts.map(contact => (
+                        <div className="contact-item" key={contact.id}>
+                            <div className="avatar">
+                                {contact.first_name?.slice(0, 1)}{contact.last_name?.slice(0, 1)}
+                            </div>
+                            <div className="contact-info">
+                                <div className="contact-name">{contact.first_name} {contact.last_name}</div>
+                                {contact.email && <div className="contact-detail">{contact.email}</div>}
+                                {contact.phone && <div className="contact-detail">{contact.phone}</div>}
+                                {contact.note && <div className="contact-detail">{contact.note}</div>}
+                            </div>
+                            <button className="edit-btn" onClick={() => {
+                                setNewContact({ ...contact });
+                                setEditingContactId(contact.id);
+                                setShowContactForm(false);
+                            }}><FaEdit /></button>
+                            <button className="delete-btn" onClick={() => handleDeleteContact(contact.id)}>×</button>
+                        </div>
+                    ))}
+
+                    {editingContactId && (
+                        <div className="contact-form">
+                            <input placeholder="First name" value={newContact.first_name}
+                                onChange={e => setNewContact({...newContact, first_name: e.target.value})} />
+                            <input placeholder="Last name" value={newContact.last_name}
+                                onChange={e => setNewContact({...newContact, last_name: e.target.value})} />
+                            <input placeholder="Email" value={newContact.email}
+                                onChange={e => setNewContact({...newContact, email: e.target.value})} />
+                            <input placeholder="Phone" value={newContact.phone}
+                                onChange={e => setNewContact({...newContact, phone: e.target.value})} />
+                            <input placeholder="Note" value={newContact.note}
+                                onChange={e => setNewContact({...newContact, note: e.target.value})} />
+                            <div className="form-btns">
+                                <button className="secondary-btn" onClick={() => setEditingContactId(null)}>Cancel</button>
+                                <button className="primary-btn" onClick={handleEditContact}>Save</button>
+                            </div>
+                        </div>
+                    )}
+
+                    {showContactForm && (
+                        <div className="contact-form">
+                            <input placeholder="First name" value={newContact.first_name}
+                                onChange={e => setNewContact({...newContact, first_name: e.target.value})} />
+                            <input placeholder="Last name" value={newContact.last_name}
+                                onChange={e => setNewContact({...newContact, last_name: e.target.value})} />
+                            <input placeholder="Email" value={newContact.email}
+                                onChange={e => setNewContact({...newContact, email: e.target.value})} />
+                            <input placeholder="Phone" value={newContact.phone}
+                                onChange={e => setNewContact({...newContact, phone: e.target.value})} />
+                            <input placeholder="Note" value={newContact.note}
+                                onChange={e => setNewContact({...newContact, note: e.target.value})} />
+                            <div className="form-btns">
+                                <button className="secondary-btn" onClick={() => setShowContactForm(false)}>Cancel</button>
+                                <button className="primary-btn" onClick={handleAddContact}>Save</button>
+                            </div>
+                        </div>
+                    )}
+
+                    {contacts.length === 0 && !showContactForm && (
+                        <div className="empty-state">No contacts yet</div>
+                    )}
                 </div>
-                <div className="contact-info">
-                    <div className="contact-name">{contact.first_name} {contact.last_name}</div>
-                    {contact.email && <div className="contact-detail">{contact.email}</div>}
-                    {contact.phone && <div className="contact-detail">{contact.phone}</div>}
-                    {contact.note && <div className="contact-detail">{contact.note}</div>}
+
+                {/* Notes card */}
+                <div className="card">
+                    <div className="card-header">
+                        <span className="card-title">My notes</span>
+                        <button className="add-btn" onClick={() => {
+                            setShowNotesForm(!showNotesForm);
+                            setEditingNoteId(null);
+                            setNewNotes({ title: "", note:"" });
+                        }}>+</button>
+                    </div>
+
+                    {notes.map(note => (
+                        <div className="notes-item" key={note.id}>
+                            <div className="note-content">
+                                <div className="note-title">{note.title}</div>
+                                <div className="note-date">{formatDate(note.created_at)}</div>
+                                <div className="note-text">{note.note}</div>
+                            </div>
+                            <button className="edit-btn" onClick={() => {
+                                setNewNotes({ title: note.title, note: note.note });
+                                setEditingNoteId(note.id);
+                                setShowNotesForm(false);
+                            }}><FaEdit /></button>
+                            <button className="delete-btn" onClick={() => handleDeleteNotes(note.id)}>×</button>
+                        </div>
+                    ))}
+
+                    {editingNoteId && (
+                        <div className="notes-form">
+                            <input placeholder="Title" value={newNotes.title}
+                                onChange={e => setNewNotes({...newNotes, title: e.target.value})} />
+                            <input placeholder="Note" value={newNotes.note}
+                                onChange={e => setNewNotes({...newNotes, note: e.target.value})} />
+                            <div className="form-btns">
+                                <button className="secondary-btn" onClick={() => setEditingNoteId(null)}>Cancel</button>
+                                <button className="primary-btn" onClick={handleEditNotes}>Save</button>
+                            </div>
+                        </div>
+                    )}
+
+                    {showNotesForm && (
+                        <div className="notes-form">
+                            <input placeholder="Title" value={newNotes.title}
+                                onChange={e => setNewNotes({...newNotes, title: e.target.value})} />
+                            <input
+                                type="date"
+                                value={newNotes.date}
+                                onChange={e => setNewNotes({ ...newNotes, date: e.target.value })}
+                            />
+                            <input placeholder="Note" value={newNotes.note}
+                                onChange={e => setNewNotes({...newNotes, note: e.target.value})} />
+                            <div className="form-btns">
+                                <button className="secondary-btn" onClick={() => setShowNotesForm(false)}>Cancel</button>
+                                <button className="primary-btn" onClick={handleAddNotes}>Save</button>
+                            </div>
+                        </div>
+                    )}
+
+                    {notes.length === 0 && !showNotesForm && (
+                        <div className="empty-state">No notes yet</div>
+                    )}
                 </div>
-                <button className="delete-btn" onClick={() => handleDeleteContact(contact.id)}>×</button>
             </div>
-        ))}
-
-        {showContactForm && (
-            <div className="contact-form">
-                <input placeholder="First name" value={newContact.first_name}
-                    onChange={e => setNewContact({...newContact, first_name: e.target.value})} />
-                <input placeholder="Last name" value={newContact.last_name}
-                    onChange={e => setNewContact({...newContact, last_name: e.target.value})} />
-                <input placeholder="Email" value={newContact.email}
-                    onChange={e => setNewContact({...newContact, email: e.target.value})} />
-                <input placeholder="Phone" value={newContact.phone}
-                    onChange={e => setNewContact({...newContact, phone: e.target.value})} />
-                <input placeholder="Note" value={newContact.note}
-                    onChange={e => setNewContact({...newContact, note: e.target.value})} />
-                <div className="form-btns">
-                    <button className="secondary-btn" onClick={() => setShowContactForm(false)}>Cancel</button>
-                    <button className="primary-btn" onClick={handleAddContact}>Save</button>
-                </div>
-            </div>
-        )}
-
-        {contacts.length === 0 && !showContactForm && (
-            <div className="empty-state">No contacts yet</div>
-        )}
-    </div>
-
-    <div className="card">
-        <div className="card-header">
-            <span className="card-title">My notes</span>
-            <button className="add-btn" onClick={() => setShowNotesForm(!showNotesForm)}>+</button>
-        </div>
-
-        {notes.map(note => (
-            <div className="notes-item" key={note.id}>
-                <div className="note-content">
-                    <div className="note-title">{note.title}</div>
-                    <div className="note-date">{formatDate(note.created_at)}</div>
-                    <div className="note-text">{note.note}</div>
-                </div>
-                <button className="delete-btn" onClick={() => handleDeleteNotes(note.id)}>×</button>
-            </div>
-        ))}
-
-        {showNotesForm && (
-            <div className="notes-form">
-                <input placeholder="Title" value={newNotes.title}
-                    onChange={e => setNewNotes({...newNotes, title: e.target.value})} />
-                <input
-                type="date"
-                value={newNotes.date}
-                onChange={e => setNewNotes({ ...newNotes, date: e.target.value })}
-                />
-                <input placeholder="Note" value={newNotes.note}
-                    onChange={e => setNewNotes({...newNotes, note: e.target.value})} />
-                <div className="form-btns">
-                    <button className="secondary-btn" onClick={() => setShowNotesForm(false)}>Cancel</button>
-                    <button className="primary-btn" onClick={handleAddNotes}>Save</button>
-                </div>
-            </div>
-        )}
-
-        {notes.length === 0 && !showNotesForm && (
-            <div className="empty-state">No notes yet</div>
-        )}
-    </div>
-</div>
         </div>
     );
 }
