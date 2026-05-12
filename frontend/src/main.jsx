@@ -85,8 +85,8 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-       { path: "forgot-password", element: <ForgotPasswordPage /> },
-       { path: "reset-password/:uid/:token", element: <ResetPasswordPage /> },
+      { path: "forgot-password", element: <ForgotPasswordPage /> },
+      { path: "reset-password/:uid/:token", element: <ResetPasswordPage /> },
     ],
   },
 ]);
@@ -98,5 +98,5 @@ createRoot(document.getElementById("root")).render(
         <RouterProvider router={router} />
       </GoogleOAuthProvider>
     </AuthProvider>
-  </StrictMode>
+  </StrictMode>,
 );
