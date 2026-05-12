@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "../api/auth";
+import EditProfileModal from "../components/EditProfileModal";
 import "./ProfilePage.css";
 
 function getInitials(firstName, lastName) {
@@ -14,6 +15,7 @@ function formatDate(dateStr) {
 export default function ProfilePage() {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     apiFetch("/api/auth/me/")
@@ -21,20 +23,25 @@ export default function ProfilePage() {
       .catch((err) => setError(err.message));
   }, []);
 
-  if (error) return <main className="profile-page__message">Error: {error}</main>;
-  if (!profile) return <main className="profile-page__message">Loading profile...</main>;
+  if (error)
+    return <main className="profile-page__message">Error: {error}</main>;
+  if (!profile)
+    return <main className="profile-page__message">Loading profile...</main>;
 
   const initials = getInitials(profile.first_name, profile.last_name);
 
   const detailRows = [
-    { label: "Desired Role", value: profile.desired_role },
-    { label: "Industry", value: profile.industry },
-    { label: "Years of Experience", value: profile.years_of_experience },
-    { label: "Location", value: profile.location },
+    { label: "Email", value: profile.email },
     { label: "Phone", value: profile.phone },
+    { label: "Location", value: profile.location },
+    { label: "Industry", value: profile.industry },
+    { label: "Desired Role", value: profile.desired_role },
+    { label: "Years of Experience", value: profile.years_of_experience },
     { label: "Career Goal", value: profile.career_goal },
-    { label: "Created At", value: formatDate(profile.created_at) },
-    { label: "Updated At", value: formatDate(profile.updated_at) },
+    {
+      label: "Date of Profile Creation",
+      value: formatDate(profile.created_at),
+    },
   ];
 
   return (
@@ -46,7 +53,8 @@ export default function ProfilePage() {
           <div className="profile-hero__details">
             <div className="profile-hero__name-row">
               <h1 className="profile-hero__name">
-                {profile.first_name || "First Name"} {profile.last_name || "Last Name"}
+                {profile.first_name || "First Name"}{" "}
+                {profile.last_name || "Last Name"}
               </h1>
 
               {profile.linkedin_url && (
@@ -63,12 +71,14 @@ export default function ProfilePage() {
             </div>
 
             <p className="profile-hero__username">
-              @{profile.username || profile.email || "username"}
+              @{profile.username || "username"}
             </p>
 
-            <p className="profile-hero__gender">
-              {profile.gender_self_described || profile.gender}
-            </p>
+            {(profile.gender_self_described || profile.gender) && (
+              <p className="profile-hero__gender">
+                {profile.gender_self_described || profile.gender}
+              </p>
+            )}
 
             <dl className="profile-hero__details-list">
               {detailRows.map((row) => (
@@ -80,11 +90,23 @@ export default function ProfilePage() {
             </dl>
           </div>
 
-          <button className="profile-hero__edit-btn" type="button">
+          <button
+            className="profile-hero__edit-btn"
+            type="button"
+            onClick={() => setIsEditing(true)}
+          >
             Edit Profile
           </button>
         </div>
       </section>
+
+      {isEditing && (
+        <EditProfileModal
+          profile={profile}
+          onClose={() => setIsEditing(false)}
+          onSaved={(updatedProfile) => setProfile(updatedProfile)}
+        />
+      )}
     </main>
   );
 }

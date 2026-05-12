@@ -23,6 +23,7 @@ import NavBar from "./components/NavBar.jsx";
 import { AuthProvider } from "./components/AuthProvider.jsx";
 import ArchivePage from "./pages/ArchivePage.jsx";
 import TrashPage from "./pages/TrashPage.jsx";
+import EditProfilePage from "./pages/EditProfilePage.jsx";
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem("token");
@@ -78,6 +79,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "profile/edit",
+        element: (
+          <ProtectedRoute>
+            <EditProfilePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "job-application/:id",
         element: (
           <ProtectedRoute>
@@ -85,8 +94,8 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-       { path: "forgot-password", element: <ForgotPasswordPage /> },
-       { path: "reset-password/:uid/:token", element: <ResetPasswordPage /> },
+      { path: "forgot-password", element: <ForgotPasswordPage /> },
+      { path: "reset-password/:uid/:token", element: <ResetPasswordPage /> },
     ],
   },
 ]);
@@ -98,5 +107,5 @@ createRoot(document.getElementById("root")).render(
         <RouterProvider router={router} />
       </GoogleOAuthProvider>
     </AuthProvider>
-  </StrictMode>
+  </StrictMode>,
 );
