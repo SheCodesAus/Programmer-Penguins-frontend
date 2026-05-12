@@ -170,7 +170,7 @@ return (
             {taskBadge && (
               <Link
                 className={`kanban-card__signal kanban-card__signal--${taskBadge.tone}`}
-                to={`/tasks?application=${application.id}`}
+                to={`/job-application/${application.id}#tasks`}
                 onClick={(event) => event.stopPropagation()}
               >
                 {taskBadge.text}
@@ -180,7 +180,7 @@ return (
             {nextEvent && (
               <Link
                 className="kanban-card__signal kanban-card__signal--event"
-                to={`/tasks?application=${application.id}`}
+                to={`/job-application/${application.id}#events`}
                 onClick={(event) => event.stopPropagation()}
               >
                 {nextEvent.event_type === "INTERVIEW" ? "Interview" : "Event"}{" "}

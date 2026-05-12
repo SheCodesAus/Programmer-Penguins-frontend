@@ -6,23 +6,36 @@
 }
 
 .tasks-agenda-page__header {
-  max-width: 1180px;
-  margin: 0 auto 24px;
+  max-width: 900px;
+  min-height: 54px;
+  margin: 0 auto 28px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  position: relative;
+  gap: 16px;
+}
+
+.tasks-agenda-page__header > div {
+  position: absolute;
+  left: 50%;
+  max-width: 420px;
+  text-align: center;
+  transform: translateX(-50%);
 }
 
 .tasks-agenda-page__header h1 {
-  margin: 0 0 6px;
+  margin: 0;
   font-family: var(--heading-font);
   font-size: 2rem;
+  font-weight: 800;
+  color: var(--text);
 }
 
 .tasks-agenda-page__header p {
-  margin: 0;
+  margin: 6px 0 0;
   color: #64748b;
+  font-size: 0.9rem;
 }
 
 .tasks-agenda-layout {
@@ -264,6 +277,18 @@
 
   .tasks-agenda-page__header {
     flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+  }
+
+  .tasks-agenda-page__header > div {
+    position: static;
+    max-width: none;
+    transform: none;
+  }
+
+  .tasks-agenda-page__header h1 {
+    font-size: 1.6rem;
   }
 
   .event-form__time-grid {

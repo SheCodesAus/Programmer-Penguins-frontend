@@ -8,6 +8,7 @@ import {
   fetchKanbanApplications,
   reopenApplicationTask,
 } from "../api/applications";
+import ConfirmModal from "../components/common/ConfirmModal";
 import "./TasksAgendaPage.css";
 
 const EMPTY_EVENT_FORM = {
@@ -51,6 +52,8 @@ export default function TasksAgendaPage() {
   const [loading, setLoading] = useState(true);
   const [submittingEvent, setSubmittingEvent] = useState(false);
   const [error, setError] = useState("");
+  const [eventTimeConflict, setEventTimeConflict] = useState(null);
+  const [pendingEventPayload, setPendingEventPayload] = useState(null);
 
   const loadPlannerData = useCallback(async () => {
     try {
@@ -121,8 +124,42 @@ export default function TasksAgendaPage() {
     setEventForm((prev) => ({ ...prev, [name]: value }));
   }
 
-  async function handleCreateEvent(event) {
-    event.preventDefault();
+  function getEventRange(eventData) {
+    const startsAt = new Date(eventData.starts_at);
+    const endsAt = eventData.ends_at
+      ? new Date(eventData.ends_at)
+      : new Date(startsAt.getTime() + 60 * 60 * 1000);
+
+    return { startsAt, endsAt };
+  }
+
+  async function findEventTimeConflict(eventData) {
+    if (!eventData.starts_at) return null;
+
+    const allEvents = await fetchApplicationEvents();
+    const { startsAt, endsAt } = getEventRange(eventData);
+
+    return allEvents.find((existingEvent) => {
+      const existingStartsAt = new Date(existingEvent.starts_at);
+      const existingEndsAt = existingEvent.ends_at
+        ? new Date(existingEvent.ends_at)
+        : new Date(existingStartsAt.getTime() + 60 * 60 * 1000);
+
+      return existingStartsAt < endsAt && existingEndsAt > startsAt;
+    }) || null;
+  }
+
+  async function createEventFromPayload(payload) {
+    await createApplicationEvent(payload);
+
+    setEventForm(EMPTY_EVENT_FORM);
+    setEventTimeConflict(null);
+    setPendingEventPayload(null);
+    await loadPlannerData();
+  }
+
+  async function handleCreateEvent(formEvent) {
+    formEvent.preventDefault();
 
     if (!eventForm.job_application || !eventForm.title || !eventForm.starts_at) {
       setError("Please choose an application, title, and start time.");
@@ -133,18 +170,45 @@ export default function TasksAgendaPage() {
       setSubmittingEvent(true);
       setError("");
 
-      await createApplicationEvent({
+      const payload = {
         ...eventForm,
         ends_at: eventForm.ends_at || null,
-      });
+      };
+      const conflictEvent = await findEventTimeConflict(payload);
 
-      setEventForm(EMPTY_EVENT_FORM);
-      await loadPlannerData();
+      if (conflictEvent) {
+        setPendingEventPayload(payload);
+        setEventTimeConflict(conflictEvent);
+        return;
+      }
+
+      await createEventFromPayload(payload);
     } catch (err) {
       setError(err.message || "Could not create event.");
     } finally {
       setSubmittingEvent(false);
     }
+  }
+
+  async function handleConfirmEventConflict() {
+    if (!pendingEventPayload) return;
+
+    try {
+      setSubmittingEvent(true);
+      setError("");
+      await createEventFromPayload(pendingEventPayload);
+    } catch (err) {
+      setError(err.message || "Could not create event.");
+      setEventTimeConflict(null);
+      setPendingEventPayload(null);
+    } finally {
+      setSubmittingEvent(false);
+    }
+  }
+
+  function handleCancelEventConflict() {
+    setEventTimeConflict(null);
+    setPendingEventPayload(null);
   }
 
   return (
@@ -367,6 +431,20 @@ export default function TasksAgendaPage() {
           </section>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={!!eventTimeConflict}
+        title="Event time conflict"
+        message={
+          eventTimeConflict
+            ? `You already have "${eventTimeConflict.title}" for ${eventTimeConflict.company_name} / ${eventTimeConflict.job_title} scheduled at ${formatDateTime(eventTimeConflict.starts_at)}. Create this event anyway?`
+            : ""
+        }
+        confirmText="Create anyway"
+        cancelText="Edit event"
+        onConfirm={handleConfirmEventConflict}
+        onCancel={handleCancelEventConflict}
+      />
     </main>
   );
 }

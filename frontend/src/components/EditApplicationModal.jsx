@@ -211,8 +211,15 @@ export default function EditApplicationModal({ application, onClose, onSaved }) 
           </div>
 
           {/* Salary */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
-            <label>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1.2fr 1.2fr 0.7fr",
+              gap: "12px",
+              width: "100%",
+            }}
+          >
+            <label style={{ minWidth: 0 }}>
               Salary Min
               <input
                 name="salary_min"
@@ -223,7 +230,8 @@ export default function EditApplicationModal({ application, onClose, onSaved }) 
                 placeholder="0"
               />
             </label>
-            <label>
+
+            <label style={{ minWidth: 0 }}>
               Salary Max
               <input
                 name="salary_max"
@@ -234,7 +242,8 @@ export default function EditApplicationModal({ application, onClose, onSaved }) 
                 placeholder="0"
               />
             </label>
-            <label>
+
+            <label style={{ minWidth: 0 }}>
               Currency
               <input
                 name="currency"
