@@ -23,7 +23,6 @@ import NavBar from "./components/NavBar.jsx";
 import { AuthProvider } from "./components/AuthProvider.jsx";
 import ArchivePage from "./pages/ArchivePage.jsx";
 import TrashPage from "./pages/TrashPage.jsx";
-import EditProfilePage from "./pages/EditProfilePage.jsx";
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem("token");
@@ -75,14 +74,6 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ProfilePage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "profile/edit",
-        element: (
-          <ProtectedRoute>
-            <EditProfilePage />
           </ProtectedRoute>
         ),
       },
