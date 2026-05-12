@@ -54,6 +54,20 @@ h6 {
   background-color: #b4b4b4;
 }
 
+.final-btn {
+  background-color: white;
+  color: var(--primary);
+  cursor: pointer;
+  padding: 14px 28px;
+  font-size: 1rem;
+  border-radius: 999px;
+  border: none;
+}
+
+.final-btn:hover {
+  background-color: var(--hoverbutton);
+}
+
 * {
   box-sizing: border-box;
 }

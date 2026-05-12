@@ -17,6 +17,10 @@
   background: white;
 }
 
+.nav-link {
+  color: var(--primary);
+}
+
 .logo {
   height: 6vh;
 }
