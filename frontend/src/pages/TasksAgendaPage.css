@@ -1,0 +1,297 @@
+.tasks-agenda-page {
+  min-height: calc(100vh - 88px);
+  padding: 32px;
+  background: var(--background);
+  color: var(--text);
+}
+
+.tasks-agenda-page__header {
+  max-width: 900px;
+  min-height: 54px;
+  margin: 0 auto 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  gap: 16px;
+}
+
+.tasks-agenda-page__header > div {
+  position: absolute;
+  left: 50%;
+  max-width: 420px;
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+.tasks-agenda-page__header h1 {
+  margin: 0;
+  font-family: var(--heading-font);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.tasks-agenda-page__header p {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.tasks-agenda-layout {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.tasks-panel,
+.agenda-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.tasks-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tasks-panel__header h2,
+.event-form h2,
+.completed-tasks h2 {
+  margin: 0;
+  font-family: var(--heading-font);
+  font-size: 1.15rem;
+}
+
+.tasks-panel__header span {
+  min-width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #eaf3ff;
+  color: var(--primary);
+  font-weight: 800;
+}
+
+.tasks-list,
+.events-list,
+.completed-tasks,
+.event-form {
+  display: grid;
+  gap: 12px;
+}
+
+.task-item,
+.event-item,
+.completed-task,
+.event-form {
+  background: var(--cardbackground);
+  border: 1px solid var(--secondary);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(148, 163, 184, 0.12);
+}
+
+.task-item {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+}
+
+.task-item--overdue {
+  border-color: #fecaca;
+  background: #fff7f7;
+}
+
+.task-item__check {
+  padding-top: 3px;
+}
+
+.task-item__check input {
+  position: absolute;
+  opacity: 0;
+}
+
+.task-item__check span {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  border: 2px solid var(--primary);
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.task-item__check input:checked + span {
+  background: var(--primary);
+  box-shadow: inset 0 0 0 4px #ffffff;
+}
+
+.task-item__body {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+
+.task-item__title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.task-item h3,
+.event-item h3 {
+  margin: 0;
+  font-size: 0.98rem;
+}
+
+.task-item__title-row span,
+.event-item__warning {
+  display: inline-flex;
+  width: fit-content;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.task-item p,
+.event-item p {
+  margin: 0;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.task-item small,
+.event-item small {
+  color: #64748b;
+  line-height: 1.45;
+}
+
+.task-item time,
+.event-item time {
+  color: var(--primary);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.event-item {
+  padding: 16px;
+}
+
+.event-item div {
+  display: grid;
+  gap: 5px;
+}
+
+.completed-task {
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid #bbf7d0;
+  background: #f0fdf4;
+  color: #166534;
+  text-align: left;
+  cursor: pointer;
+}
+
+.completed-task span {
+  font-weight: 800;
+}
+
+.completed-task small {
+  color: #15803d;
+}
+
+.event-form {
+  padding: 18px;
+}
+
+.event-form input,
+.event-form select,
+.event-form textarea {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid var(--secondary);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #ffffff;
+  color: var(--text);
+  font-family: var(--body-font);
+  font-size: 0.9rem;
+}
+
+.event-form textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.event-form__time-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.event-form__time-grid label {
+  display: grid;
+  gap: 5px;
+}
+
+.event-form__time-grid span {
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.tasks-agenda-page__message,
+.tasks-agenda-page__error {
+  margin: 14px 0;
+  color: #64748b;
+}
+
+.tasks-agenda-page__error {
+  max-width: 1180px;
+  margin: 16px auto;
+  color: #dc2626;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .tasks-agenda-page {
+    padding: 20px;
+  }
+
+  .tasks-agenda-page__header,
+  .tasks-agenda-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .tasks-agenda-page__header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+  }
+
+  .tasks-agenda-page__header > div {
+    position: static;
+    max-width: none;
+    transform: none;
+  }
+
+  .tasks-agenda-page__header h1 {
+    font-size: 1.6rem;
+  }
+
+  .event-form__time-grid {
+    grid-template-columns: 1fr;
+  }
+}

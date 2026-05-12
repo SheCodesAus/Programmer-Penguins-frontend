@@ -125,6 +125,47 @@
   margin: 0;
 }
 
+.kanban-card__signals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 7px;
+  padding-right: 48px;
+}
+
+.kanban-card__signal {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 3px 6px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.kanban-card__signal:hover {
+  filter: brightness(0.96);
+}
+
+.kanban-card__signal--danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.kanban-card__signal--success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.kanban-card__signal--event {
+  background: #eaf3ff;
+  color: var(--primary);
+}
+
 /* ── Star button ── */
 .kanban-card__star {
   background: none;

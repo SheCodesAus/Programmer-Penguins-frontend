@@ -403,6 +403,303 @@
   padding: 10px 0;
 }
 
+.tasks-card {
+  margin-top: 24px;
+}
+
+.events-card {
+  margin-top: 24px;
+}
+
+.tasks-card__summary {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.task-form,
+.application-event-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.task-form input,
+.task-form textarea,
+.application-event-form input,
+.application-event-form select,
+.application-event-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-family: var(--body-font);
+  font-size: 13px;
+  background: #ffffff;
+}
+
+.task-form textarea,
+.application-event-form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.task-form input:focus,
+.task-form textarea:focus,
+.application-event-form input:focus,
+.application-event-form select:focus,
+.application-event-form textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.task-form__row,
+.application-event-form__time-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: end;
+}
+
+.task-form__row label,
+.application-event-form__time-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.task-form__checkbox {
+  min-height: 40px;
+  flex-direction: row !important;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.task-form__checkbox input {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+}
+
+.application-tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.application-tasks + .application-tasks {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.application-tasks--completed {
+  color: #64748b;
+}
+
+.task-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+}
+
+.application-task {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fbff;
+}
+
+.application-task--completed {
+  background: #f8fafc;
+}
+
+.application-task__check {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.application-task__check input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.application-task__check span {
+  display: block;
+  width: 22px;
+  height: 22px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.application-task__check input:checked + span {
+  border-color: var(--primary);
+  background: var(--primary);
+}
+
+.application-task__check input:checked + span::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 4px;
+  width: 5px;
+  height: 10px;
+  border: solid #ffffff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.application-task__body {
+  min-width: 0;
+  flex: 1;
+  text-align: left;
+}
+
+.application-task__title-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.application-task__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+  overflow-wrap: anywhere;
+}
+
+.application-task--completed .application-task__title {
+  color: #64748b;
+  text-decoration: line-through;
+}
+
+.application-task__badge {
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.application-task__description {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #475569;
+  overflow-wrap: anywhere;
+}
+
+.application-task__meta {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.application-events {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.application-events + .application-events {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.application-event {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fbff;
+  text-align: left;
+}
+
+.application-event--past {
+  background: #f8fafc;
+}
+
+.application-event__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.application-event__title {
+  color: #1e293b;
+  font-size: 13px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.application-event--past .application-event__title {
+  color: #64748b;
+}
+
+.application-event__badge {
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.application-event__meta {
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.application-event__detail,
+.application-event__notes {
+  color: #475569;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.application-event__link {
+  width: fit-content;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.application-event__link:hover {
+  text-decoration: underline;
+}
+
+.application-event__warning {
+  width: fit-content;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 11px;
+  font-weight: 700;
+}
+
 .loading {
   text-align: center;
   padding: 40px;
@@ -547,6 +844,17 @@
   text-align: left;
 }
 
+.form-warning {
+  color: #92400e;
+  background: #fef3c7;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-align: left;
+}
+
 @media (max-width: 768px) {
   .page-container {
     padding: 20px;
@@ -564,5 +872,23 @@
   .progress-bar {
     flex-direction: column;
     border-radius: 16px;
+  }
+
+  .task-form__row {
+    grid-template-columns: 1fr;
+  }
+
+  .application-event-form__time-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .task-form__checkbox {
+    min-height: auto;
+  }
+
+  .application-task__title-row,
+  .application-event__header {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

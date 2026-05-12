@@ -191,6 +191,10 @@
   transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
+.kanban-board__icon-tooltip svg {
+  color: var(--primary);
+}
+
 .kanban-board__icon-tooltip:hover {
   transform: translateY(-1px) scale(1.08);
   opacity: 1;
