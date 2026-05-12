@@ -23,8 +23,10 @@ export default function ProfilePage() {
       .catch((err) => setError(err.message));
   }, []);
 
-  if (error) return <main className="profile-page__message">Error: {error}</main>;
-  if (!profile) return <main className="profile-page__message">Loading profile...</main>;
+  if (error)
+    return <main className="profile-page__message">Error: {error}</main>;
+  if (!profile)
+    return <main className="profile-page__message">Loading profile...</main>;
 
   const initials = getInitials(profile.first_name, profile.last_name);
 
@@ -36,8 +38,11 @@ export default function ProfilePage() {
     { label: "Desired Role", value: profile.desired_role },
     { label: "Years of Experience", value: profile.years_of_experience },
     { label: "Career Goal", value: profile.career_goal },
-    { label: "Date of Profile Creation", value: formatDate(profile.created_at) },
-    ];
+    {
+      label: "Date of Profile Creation",
+      value: formatDate(profile.created_at),
+    },
+  ];
 
   return (
     <main className="profile-page">
@@ -48,7 +53,8 @@ export default function ProfilePage() {
           <div className="profile-hero__details">
             <div className="profile-hero__name-row">
               <h1 className="profile-hero__name">
-                {profile.first_name || "First Name"} {profile.last_name || "Last Name"}
+                {profile.first_name || "First Name"}{" "}
+                {profile.last_name || "Last Name"}
               </h1>
 
               {profile.linkedin_url && (

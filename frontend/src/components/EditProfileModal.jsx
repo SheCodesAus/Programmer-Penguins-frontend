@@ -200,7 +200,10 @@ export default function EditProfileModal({ profile, onClose, onSaved }) {
 
   return (
     <>
-      <div className="new-app-modal__backdrop" onMouseDown={handleBackdropClick}>
+      <div
+        className="new-app-modal__backdrop"
+        onMouseDown={handleBackdropClick}
+      >
         <div
           className="new-app-modal"
           role="dialog"
@@ -209,7 +212,11 @@ export default function EditProfileModal({ profile, onClose, onSaved }) {
         >
           <div className="new-app-modal__header">
             <h2 id="edit-profile-modal-title">Edit Profile</h2>
-            <button className="new-app-modal__close" onClick={onClose} aria-label="Close">
+            <button
+              className="new-app-modal__close"
+              onClick={onClose}
+              aria-label="Close"
+            >
               ×
             </button>
           </div>
@@ -217,19 +224,35 @@ export default function EditProfileModal({ profile, onClose, onSaved }) {
           <form className="new-app-modal__form" onSubmit={handleSubmit}>
             <label>
               First Name
-              <input name="first_name" value={form.first_name} onChange={handleChange} placeholder="First name" />
+              <input
+                name="first_name"
+                value={form.first_name}
+                onChange={handleChange}
+                placeholder="First name"
+              />
               <ErrorMessage error={fieldErrors.first_name} />
             </label>
 
             <label>
               Last Name
-              <input name="last_name" value={form.last_name} onChange={handleChange} placeholder="Last name" />
+              <input
+                name="last_name"
+                value={form.last_name}
+                onChange={handleChange}
+                placeholder="Last name"
+              />
               <ErrorMessage error={fieldErrors.last_name} />
             </label>
 
             <label>
               Email
-              <input name="email" type="email" value={form.email} onChange={handleChange} placeholder="Email" />
+              <input
+                name="email"
+                type="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="Email"
+              />
               <ErrorMessage error={fieldErrors.email} />
             </label>
 
@@ -239,16 +262,29 @@ export default function EditProfileModal({ profile, onClose, onSaved }) {
 
             <label>
               Desired Role
-              <input name="desired_role" value={form.desired_role} onChange={handleChange} placeholder="What role are you looking for?" />
+              <input
+                name="desired_role"
+                value={form.desired_role}
+                onChange={handleChange}
+                placeholder="What role are you looking for?"
+              />
               <ErrorMessage error={fieldErrors.desired_role} />
             </label>
 
             <label>
               Industry
-              <select name="industry" value={form.industry} onChange={handleChange}>
-                <option value="" disabled hidden>What industry are you working in?</option>
+              <select
+                name="industry"
+                value={form.industry}
+                onChange={handleChange}
+              >
+                <option value="" disabled hidden>
+                  What industry are you working in?
+                </option>
                 {INDUSTRY_OPTIONS.filter(Boolean).map((option) => (
-                  <option key={option} value={option}>{option}</option>
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
                 ))}
               </select>
               <ErrorMessage error={fieldErrors.industry} />
@@ -257,22 +293,43 @@ export default function EditProfileModal({ profile, onClose, onSaved }) {
             {form.industry === "Other" && (
               <label>
                 Please specify your industry
-                <input name="industry_other" value={form.industry_other} onChange={handleChange} placeholder="Enter your industry" />
+                <input
+                  name="industry_other"
+                  value={form.industry_other}
+                  onChange={handleChange}
+                  placeholder="Enter your industry"
+                />
               </label>
             )}
 
             <label>
               Years of Experience
-              <input name="years_of_experience" type="number" min="0" max="80" value={form.years_of_experience} onChange={handleChange} placeholder="How many years have you been in the industry?" />
+              <input
+                name="years_of_experience"
+                type="number"
+                min="0"
+                max="80"
+                value={form.years_of_experience}
+                onChange={handleChange}
+                placeholder="How many years have you been in the industry?"
+              />
               <ErrorMessage error={fieldErrors.years_of_experience} />
             </label>
 
             <label>
               Location
-              <select name="location" value={form.location} onChange={handleChange}>
-                <option value="" disabled hidden>Where are you located?</option>
+              <select
+                name="location"
+                value={form.location}
+                onChange={handleChange}
+              >
+                <option value="" disabled hidden>
+                  Where are you located?
+                </option>
                 {LOCATION_OPTIONS.filter(Boolean).map((option) => (
-                  <option key={option} value={option}>{option}</option>
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
                 ))}
               </select>
               <ErrorMessage error={fieldErrors.location} />
@@ -281,23 +338,40 @@ export default function EditProfileModal({ profile, onClose, onSaved }) {
             {form.location === "Other" && (
               <label>
                 Please specify your location
-                <input name="location_other" value={form.location_other} onChange={handleChange} placeholder="Enter your location" />
+                <input
+                  name="location_other"
+                  value={form.location_other}
+                  onChange={handleChange}
+                  placeholder="Enter your location"
+                />
               </label>
             )}
 
             <label>
               Phone
-              <input name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="+61..." />
+              <input
+                name="phone"
+                type="tel"
+                value={form.phone}
+                onChange={handleChange}
+                placeholder="+61..."
+              />
               <ErrorMessage error={fieldErrors.phone} />
             </label>
 
             <label>
               Gender
               <select name="gender" value={form.gender} onChange={handleChange}>
-                <option value="" disabled hidden>What gender do you identify as?</option>
-                {GENDER_OPTIONS.filter((option) => option.value).map((option) => (
-                  <option key={option.value} value={option.value}>{option.label}</option>
-                ))}
+                <option value="" disabled hidden>
+                  What gender do you identify as?
+                </option>
+                {GENDER_OPTIONS.filter((option) => option.value).map(
+                  (option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ),
+                )}
               </select>
               <ErrorMessage error={fieldErrors.gender} />
             </label>
@@ -305,20 +379,37 @@ export default function EditProfileModal({ profile, onClose, onSaved }) {
             {form.gender === "self_describe" && (
               <label>
                 Describe your gender
-                <input name="gender_self_described" value={form.gender_self_described} onChange={handleChange} placeholder="Enter your gender" />
+                <input
+                  name="gender_self_described"
+                  value={form.gender_self_described}
+                  onChange={handleChange}
+                  placeholder="Enter your gender"
+                />
                 <ErrorMessage error={fieldErrors.gender_self_described} />
               </label>
             )}
 
             <label>
               LinkedIn
-              <input name="linkedin_url" type="url" value={form.linkedin_url} onChange={handleChange} placeholder="Link to LinkedIn profile" />
+              <input
+                name="linkedin_url"
+                type="url"
+                value={form.linkedin_url}
+                onChange={handleChange}
+                placeholder="Link to LinkedIn profile"
+              />
               <ErrorMessage error={fieldErrors.linkedin_url} />
             </label>
 
             <label>
               Career Goal
-              <textarea name="career_goal" value={form.career_goal} onChange={handleChange} placeholder="What is your career goal?" rows="4" />
+              <textarea
+                name="career_goal"
+                value={form.career_goal}
+                onChange={handleChange}
+                placeholder="What is your career goal?"
+                rows="4"
+              />
               <ErrorMessage error={fieldErrors.career_goal} />
             </label>
 
@@ -329,7 +420,12 @@ export default function EditProfileModal({ profile, onClose, onSaved }) {
                 Cancel
               </button>
 
-              <button type="button" className="danger" onClick={() => setShowDeleteConfirm(true)} disabled={saving}>
+              <button
+                type="button"
+                className="danger"
+                onClick={() => setShowDeleteConfirm(true)}
+                disabled={saving}
+              >
                 Delete Profile
               </button>
 
@@ -356,7 +452,9 @@ export default function EditProfileModal({ profile, onClose, onSaved }) {
 
 function ErrorMessage({ error }) {
   if (!error) return null;
-  return <span className="new-app-modal__field-error">{formatError(error)}</span>;
+  return (
+    <span className="new-app-modal__field-error">{formatError(error)}</span>
+  );
 }
 
 function formatError(err) {
