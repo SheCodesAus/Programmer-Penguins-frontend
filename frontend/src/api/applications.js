@@ -89,53 +89,9 @@ export async function restoreApplication(id) {
   });
 }
 
-export async function fetchApplicationTasks({ applicationId, completed } = {}) {
-  const params = new URLSearchParams();
-
-  if (applicationId) {
-    params.set("application", applicationId);
-  }
-
-  if (completed !== undefined) {
-    params.set("completed", completed ? "true" : "false");
-  }
-
-  const query = params.toString();
-
-  return apiFetch(`${APPLICATIONS_PATH}/tasks/${query ? `?${query}` : ""}`);
-}
-
-export async function completeApplicationTask(id) {
-  return apiFetch(`${APPLICATIONS_PATH}/tasks/${id}/complete/`, {
+export async function updateApplication(id, data) {
+  return apiFetch(`${APPLICATIONS_PATH}/${id}/`, {
     method: "PATCH",
-  });
-}
-
-export async function reopenApplicationTask(id) {
-  return apiFetch(`${APPLICATIONS_PATH}/tasks/${id}/reopen/`, {
-    method: "PATCH",
-  });
-}
-
-export async function fetchApplicationEvents({ applicationId, upcoming } = {}) {
-  const params = new URLSearchParams();
-
-  if (applicationId) {
-    params.set("application", applicationId);
-  }
-
-  if (upcoming !== undefined) {
-    params.set("upcoming", upcoming ? "true" : "false");
-  }
-
-  const query = params.toString();
-
-  return apiFetch(`${APPLICATIONS_PATH}/events/${query ? `?${query}` : ""}`);
-}
-
-export async function createApplicationEvent(data) {
-  return apiFetch(`${APPLICATIONS_PATH}/events/`, {
-    method: "POST",
     body: JSON.stringify(data),
   });
 }
