@@ -1,0 +1,19 @@
+.btn-primary {
+  background: #1671ee;
+  color: #ffffff;
+  border: none;
+  border-radius: 3px;
+  padding: 0.8rem 1.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.btn-primary:hover {
+  background: #0d52c7;
+}
