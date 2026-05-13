@@ -1,5 +1,4 @@
 import Confetti from "react-confetti";
-import { useEffect, useState } from "react";
 import "./MotivationToast.css";
 
 function getEmoji(toStatus, action) {
@@ -23,30 +22,12 @@ function getToneClass(toStatus, action) {
 }
 
 export default function MotivationToast({ message, onClose }) {
-  const [showConfetti, setShowConfetti] = useState(false);
-
-  useEffect(() => {
-    if (message) {
-      const shouldShowConfetti =
-        message.toStatus !== "REJECTED" &&
-        message.toStatus !== "WITHDRAWN";
-
-      setShowConfetti(shouldShowConfetti);
-
-      if (shouldShowConfetti) {
-        const timer = setTimeout(() => {
-          setShowConfetti(false);
-        }, 2500);
-
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [message]);
-
   if (!message) return null;
 
   const emoji = getEmoji(message.toStatus, message.action);
   const toneClass = getToneClass(message.toStatus, message.action);
+  const showConfetti =
+    message.toStatus !== "REJECTED" && message.toStatus !== "WITHDRAWN";
 
   return (
     <div className="motivation-overlay" onClick={onClose}>

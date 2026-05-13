@@ -299,15 +299,31 @@
 }
 
 .edit-btn {
-  background: none;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: #f1f5f9;
   border: none;
-  color: #cbd5e1;
-  font-size: 18px;
+  border-radius: 50%;
+  color: #64748b;
+  font-size: 13px;
   cursor: pointer;
+  padding: 0;
+  transition: all 0.15s ease;
 }
 
-.edit-btn:hover svg {
-  fill: #ef4444;
+.edit-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+.edit-btn:hover {
+  background: #bbf7d0;
+  color: #166534;
+  transform: translateY(-1px);
 }
 
 /* notes */
@@ -509,10 +525,11 @@
 }
 
 .application-task {
+  position: relative;
   display: flex;
   gap: 12px;
   align-items: flex-start;
-  padding: 12px;
+  padding: 12px 82px 12px 12px;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   background: #f8fbff;
@@ -611,6 +628,94 @@
   color: #94a3b8;
 }
 
+.application-item__actions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.application-item__actions button {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-family: var(--body-font);
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+
+.application-item__edit svg {
+  width: 13px;
+  height: 13px;
+}
+
+.application-item__edit {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.application-item__edit:hover {
+  background: #bbf7d0;
+  color: #166534;
+  transform: translateY(-1px);
+}
+
+.application-item__delete {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.application-item__delete:hover {
+  background: #fee2e2;
+  color: #dc2626;
+  transform: translateY(-1px);
+}
+
+.application-inline-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.application-inline-form input,
+.application-inline-form select,
+.application-inline-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--text);
+  font-family: var(--body-font);
+  font-size: 13px;
+}
+
+.application-inline-form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.application-inline-form input:focus,
+.application-inline-form select:focus,
+.application-inline-form textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
 .application-events {
   display: flex;
   flex-direction: column;
@@ -624,9 +729,10 @@
 }
 
 .application-event {
+  position: relative;
   display: grid;
   gap: 6px;
-  padding: 12px;
+  padding: 12px 82px 12px 12px;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   background: #f8fbff;
@@ -749,6 +855,7 @@
 .contact-info,
 .note-content {
   flex: 1;
+  min-width: 0;
 }
 
 .contact-name,
@@ -756,12 +863,14 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--text);
+  overflow-wrap: anywhere;
 }
 
 .contact-detail,
 .note-text {
   font-size: 13px;
   color: #64748b;
+  overflow-wrap: anywhere;
 }
 
 .note-date {
@@ -770,15 +879,28 @@
 }
 
 .delete-btn {
-  background: none;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: #f1f5f9;
   border: none;
-  color: #cbd5e1;
-  font-size: 22px;
+  border-radius: 50%;
+  color: #64748b;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
   cursor: pointer;
+  padding: 0;
+  transition: all 0.15s ease;
 }
 
 .delete-btn:hover {
+  background: #fee2e2;
   color: #ef4444;
+  transform: translateY(-1px);
 }
 
 .contact-form,

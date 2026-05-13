@@ -6,16 +6,29 @@ import {
     completeApplicationTask,
     createApplicationEvent,
     createApplicationTask,
+    deleteApplicationEvent,
+    deleteApplicationTask,
     fetchApplicationEvents,
     fetchApplicationTasks,
-    reopenApplicationTask
+    reopenApplicationTask,
+    updateApplicationEvent,
+    updateApplicationTask
 } from "../api/applications";
 import { getCompanyInitials, getCompanyLogoUrl } from "../utils/companyLogo";
 import EditApplicationModal from "../components/EditApplicationModal";
 import ConfirmModal from "../components/common/ConfirmModal";
+import EventScheduleFields from "../components/EventScheduleFields";
+import { toDateTimeLocalValue } from "../utils/dateTimeLocal";
 import { FaEdit } from "react-icons/fa";
 
 const EMPTY_TASK_FORM = {
+    title: "",
+    description: "",
+    due_at: "",
+    is_required: false
+};
+
+const EMPTY_TASK_EDIT_FORM = {
     title: "",
     description: "",
     due_at: "",
@@ -64,14 +77,25 @@ function JobApplicationPage() {
     const [editingNoteId, setEditingNoteId] = useState(null);
     const [showTaskForm, setShowTaskForm] = useState(false);
     const [newTask, setNewTask] = useState(EMPTY_TASK_FORM);
+    const [editingTaskId, setEditingTaskId] = useState(null);
+    const [taskEditForm, setTaskEditForm] = useState(EMPTY_TASK_EDIT_FORM);
     const [taskError, setTaskError] = useState("");
     const [taskNotice, setTaskNotice] = useState("");
     const [showEventForm, setShowEventForm] = useState(false);
     const [eventForm, setEventForm] = useState(EMPTY_EVENT_FORM);
+    const [editingEventId, setEditingEventId] = useState(null);
+    const [eventEditForm, setEventEditForm] = useState(EMPTY_EVENT_FORM);
     const [eventError, setEventError] = useState("");
     const [submittingEvent, setSubmittingEvent] = useState(false);
     const [eventTimeConflict, setEventTimeConflict] = useState(null);
     const [pendingEventPayload, setPendingEventPayload] = useState(null);
+    const [deletePlannerTarget, setDeletePlannerTarget] = useState(null);
+    const [deleteContentTarget, setDeleteContentTarget] = useState(null);
+    const [messageModal, setMessageModal] = useState({
+        isOpen: false,
+        title: "",
+        message: ""
+    });
 
     const companyLogoUrl = getCompanyLogoUrl(job);
     const companyInitials = getCompanyInitials(job?.company_name);
@@ -134,6 +158,11 @@ function JobApplicationPage() {
         setJob(jobData);
         setTasks(taskData);
         setEvents(eventData);
+    };
+
+    const refreshApplicationContacts = async () => {
+        const contactData = await apiFetch(`/api/applications/${id}/contacts/`);
+        setContacts(contactData);
     };
 
     const handleToggleTask = async (task) => {
@@ -231,6 +260,55 @@ function JobApplicationPage() {
         setTaskNotice("");
     };
 
+    const startEditingTask = (task) => {
+        setEditingTaskId(task.id);
+        setTaskEditForm({
+            title: task.title || "",
+            description: task.description || "",
+            due_at: toDateTimeLocalValue(task.due_at),
+            is_required: !!task.is_required
+        });
+        setTaskError("");
+        setTaskNotice("");
+    };
+
+    const handleTaskEditFormChange = (event) => {
+        const { name, value, checked, type } = event.target;
+
+        setTaskEditForm(prevTask => ({
+            ...prevTask,
+            [name]: type === "checkbox" ? checked : value
+        }));
+        setTaskError("");
+        setTaskNotice("");
+    };
+
+    const cancelEditingTask = () => {
+        setEditingTaskId(null);
+        setTaskEditForm(EMPTY_TASK_EDIT_FORM);
+    };
+
+    const handleSaveTaskEdit = async (task) => {
+        if (!taskEditForm.title.trim()) {
+            setTaskError("Please enter a task title.");
+            return;
+        }
+
+        try {
+            setTaskError("");
+            await updateApplicationTask(task.id, {
+                title: taskEditForm.title.trim(),
+                description: taskEditForm.description.trim(),
+                due_at: taskEditForm.due_at || null,
+                is_required: taskEditForm.is_required
+            });
+            cancelEditingTask();
+            await refreshApplicationPlanner();
+        } catch (err) {
+            setTaskError(err.message || "Could not update task.");
+        }
+    };
+
     const getEventRange = (eventData) => {
         const startsAt = new Date(eventData.starts_at);
         const endsAt = eventData.ends_at
@@ -240,13 +318,15 @@ function JobApplicationPage() {
         return { startsAt, endsAt };
     };
 
-    const findEventTimeConflict = async (eventData) => {
+    const findEventTimeConflict = async (eventData, ignoredEventId = null) => {
         if (!eventData.starts_at) return null;
 
         const allEvents = await fetchApplicationEvents();
         const { startsAt, endsAt } = getEventRange(eventData);
 
         return allEvents.find(existingEvent => {
+            if (ignoredEventId && existingEvent.id === ignoredEventId) return false;
+
             const existingStartsAt = new Date(existingEvent.starts_at);
             const existingEndsAt = existingEvent.ends_at
                 ? new Date(existingEvent.ends_at)
@@ -263,7 +343,10 @@ function JobApplicationPage() {
         setShowEventForm(false);
         setEventTimeConflict(null);
         setPendingEventPayload(null);
-        await refreshApplicationPlanner();
+        await Promise.all([
+            refreshApplicationPlanner(),
+            refreshApplicationContacts()
+        ]);
     };
 
     const handleEventFormChange = (event) => {
@@ -274,6 +357,94 @@ function JobApplicationPage() {
             [name]: value
         }));
         setEventError("");
+    };
+
+    const handleEventScheduleChange = (updates) => {
+        setEventForm(prevEventForm => ({
+            ...prevEventForm,
+            ...updates
+        }));
+        setEventError("");
+    };
+
+    const startEditingEvent = (event) => {
+        setEditingEventId(event.id);
+        setEventEditForm({
+            title: event.title || "",
+            event_type: event.event_type || "INTERVIEW",
+            starts_at: toDateTimeLocalValue(event.starts_at),
+            ends_at: toDateTimeLocalValue(event.ends_at),
+            location: event.location || "",
+            meeting_link: event.meeting_link || "",
+            contact_name: event.contact_name || "",
+            contact_email: event.contact_email || "",
+            contact_phone: event.contact_phone || "",
+            notes: event.notes || ""
+        });
+        setEventError("");
+    };
+
+    const handleEventEditFormChange = (event) => {
+        const { name, value } = event.target;
+
+        setEventEditForm(prevEventForm => ({
+            ...prevEventForm,
+            [name]: value
+        }));
+        setEventError("");
+    };
+
+    const handleEventEditScheduleChange = (updates) => {
+        setEventEditForm(prevEventForm => ({
+            ...prevEventForm,
+            ...updates
+        }));
+        setEventError("");
+    };
+
+    const cancelEditingEvent = () => {
+        setEditingEventId(null);
+        setEventEditForm(EMPTY_EVENT_FORM);
+    };
+
+    const handleSaveEventEdit = async (event) => {
+        if (!eventEditForm.title.trim() || !eventEditForm.starts_at) {
+            setEventError("Please enter an event title and start time.");
+            return;
+        }
+
+        try {
+            setSubmittingEvent(true);
+            setEventError("");
+
+            const payload = {
+                ...eventEditForm,
+                title: eventEditForm.title.trim(),
+                ends_at: eventEditForm.ends_at || null
+            };
+            const conflictEvent = await findEventTimeConflict(payload, event.id);
+
+            if (conflictEvent) {
+                setPendingEventPayload({
+                    ...payload,
+                    id: event.id,
+                    mode: "update"
+                });
+                setEventTimeConflict(conflictEvent);
+                return;
+            }
+
+            await updateApplicationEvent(event.id, payload);
+            cancelEditingEvent();
+            await Promise.all([
+                refreshApplicationPlanner(),
+                refreshApplicationContacts()
+            ]);
+        } catch (err) {
+            setEventError(err.message || "Could not update event.");
+        } finally {
+            setSubmittingEvent(false);
+        }
     };
 
     const handleAddEvent = async () => {
@@ -314,7 +485,20 @@ function JobApplicationPage() {
         try {
             setSubmittingEvent(true);
             setEventError("");
-            await createEventFromPayload(pendingEventPayload);
+            if (pendingEventPayload.mode === "update") {
+                const { id: eventId, ...payload } = pendingEventPayload;
+                delete payload.mode;
+                await updateApplicationEvent(eventId, payload);
+                cancelEditingEvent();
+                setEventTimeConflict(null);
+                setPendingEventPayload(null);
+                await Promise.all([
+                    refreshApplicationPlanner(),
+                    refreshApplicationContacts()
+                ]);
+            } else {
+                await createEventFromPayload(pendingEventPayload);
+            }
         } catch (err) {
             setEventError(err.message || "Could not create event.");
             setEventTimeConflict(null);
@@ -329,6 +513,49 @@ function JobApplicationPage() {
         setPendingEventPayload(null);
     };
 
+    const handleConfirmPlannerDelete = async () => {
+        if (!deletePlannerTarget) return;
+
+        try {
+            if (deletePlannerTarget.type === "task") {
+                await deleteApplicationTask(deletePlannerTarget.item.id);
+                if (editingTaskId === deletePlannerTarget.item.id) {
+                    cancelEditingTask();
+                }
+            } else {
+                await deleteApplicationEvent(deletePlannerTarget.item.id);
+                if (editingEventId === deletePlannerTarget.item.id) {
+                    cancelEditingEvent();
+                }
+            }
+
+            setDeletePlannerTarget(null);
+            await refreshApplicationPlanner();
+        } catch (err) {
+            if (deletePlannerTarget.type === "task") {
+                setTaskError(err.message || "Could not delete task.");
+            } else {
+                setEventError(err.message || "Could not delete event.");
+            }
+        }
+    };
+
+    const showMessageModal = (message, title = "Something went wrong") => {
+        setMessageModal({
+            isOpen: true,
+            title,
+            message
+        });
+    };
+
+    const closeMessageModal = () => {
+        setMessageModal({
+            isOpen: false,
+            title: "",
+            message: ""
+        });
+    };
+
     const handleAddContact = async () => {
         try {
             const created = await apiFetch(`/api/applications/${id}/contacts/`, {
@@ -339,7 +566,7 @@ function JobApplicationPage() {
             setNewContact({ first_name: "", last_name: "", email: "", phone: "", note: "" });
             setShowContactForm(false);
         } catch (err) {
-            alert(err.message);
+            showMessageModal(err.message || "Could not save the contact.");
         }
     };
 
@@ -353,18 +580,39 @@ function JobApplicationPage() {
             setEditingContactId(null);
             setNewContact({ first_name: "", last_name: "", email: "", phone: "", note: "" });
         } catch (err) {
-            alert(err.message);
+            showMessageModal(err.message || "Could not update the contact.");
         }
     };
 
-    const handleDeleteContact = async (contactId) => {
+    const handleDeleteContact = (contact) => {
+        setDeleteContentTarget({
+            type: "contact",
+            item: contact
+        });
+    };
+
+    const handleConfirmContentDelete = async () => {
+        if (!deleteContentTarget) return;
+
         try {
-            await apiFetch(`/api/applications/contacts/${contactId}/`, {
-                method: "DELETE"
-            });
-            setContacts(contacts.filter(c => c.id !== contactId));
+            if (deleteContentTarget.type === "contact") {
+                await apiFetch(`/api/applications/contacts/${deleteContentTarget.item.id}/`, {
+                    method: "DELETE"
+                });
+                setContacts(contacts.filter(c => c.id !== deleteContentTarget.item.id));
+            } else {
+                await apiFetch(`/api/applications/notes/${deleteContentTarget.item.id}/`, {
+                    method: "DELETE"
+                });
+                setNotes(notes.filter(n => n.id !== deleteContentTarget.item.id));
+            }
+
+            setDeleteContentTarget(null);
         } catch (err) {
-            alert(err.message);
+            showMessageModal(
+                err.message ||
+                    `Could not delete the ${deleteContentTarget.type}.`
+            );
         }
     };
 
@@ -378,7 +626,7 @@ function JobApplicationPage() {
             setNewNotes({ title: "", note: "" });
             setShowNotesForm(false);
         } catch (err) {
-            alert(err.message);
+            showMessageModal(err.message || "Could not save the note.");
         }
     };
 
@@ -392,19 +640,35 @@ function JobApplicationPage() {
             setEditingNoteId(null);
             setNewNotes({ title: "", note: "" });
         } catch (err) {
-            alert(err.message);
+            showMessageModal(err.message || "Could not update the note.");
         }
     };
 
-    const handleDeleteNotes = async (notesId) => {
-        try {
-            await apiFetch(`/api/applications/notes/${notesId}/`, {
-                method: "DELETE"
-            });
-            setNotes(notes.filter(n => n.id !== notesId));
-        } catch (err) {
-            alert(err.message);
+    const handleDeleteNotes = (note) => {
+        setDeleteContentTarget({
+            type: "note",
+            item: note
+        });
+    };
+
+    const getDeleteContentLabel = () => {
+        if (!deleteContentTarget) return "";
+
+        if (deleteContentTarget.type === "contact") {
+            const contact = deleteContentTarget.item;
+            return (
+                `${contact.first_name || ""} ${contact.last_name || ""}`.trim() ||
+                contact.email ||
+                contact.phone ||
+                "this contact"
+            );
         }
+
+        return (
+            deleteContentTarget.item.title ||
+            deleteContentTarget.item.note ||
+            "this note"
+        );
     };
 
     const STAGES = ["FOUND", "APPLIED", "INTERVIEWING", "OFFER", "REJECTED", "WITHDRAWN"];
@@ -631,6 +895,70 @@ function JobApplicationPage() {
                                     <div className="application-task__meta">
                                         {formatDateTime(task.due_at)}
                                     </div>
+                                    <div className="application-item__actions">
+                                        <button
+                                            type="button"
+                                            className="application-item__edit"
+                                            onClick={() => startEditingTask(task)}
+                                            aria-label={`Edit ${task.title}`}
+                                            title="Edit"
+                                        >
+                                            <FaEdit />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="application-item__delete"
+                                            onClick={() => setDeletePlannerTarget({ type: "task", item: task })}
+                                            aria-label={`Delete ${task.title}`}
+                                            title="Delete"
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+                                    {editingTaskId === task.id && (
+                                        <div className="application-inline-form">
+                                            <input
+                                                name="title"
+                                                placeholder="Task title"
+                                                value={taskEditForm.title}
+                                                onChange={handleTaskEditFormChange}
+                                            />
+                                            <textarea
+                                                name="description"
+                                                placeholder="Description"
+                                                value={taskEditForm.description}
+                                                onChange={handleTaskEditFormChange}
+                                            />
+                                            <div className="task-form__row">
+                                                <label>
+                                                    <span>Due</span>
+                                                    <input
+                                                        type="datetime-local"
+                                                        name="due_at"
+                                                        value={taskEditForm.due_at}
+                                                        onChange={handleTaskEditFormChange}
+                                                    />
+                                                </label>
+                                                <label className="task-form__checkbox">
+                                                    <input
+                                                        type="checkbox"
+                                                        name="is_required"
+                                                        checked={taskEditForm.is_required}
+                                                        onChange={handleTaskEditFormChange}
+                                                    />
+                                                    <span>Required</span>
+                                                </label>
+                                            </div>
+                                            <div className="form-btns">
+                                                <button className="secondary-btn" type="button" onClick={cancelEditingTask}>
+                                                    Cancel
+                                                </button>
+                                                <button className="primary-btn" type="button" onClick={() => handleSaveTaskEdit(task)}>
+                                                    Save
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         ))}
@@ -660,6 +988,70 @@ function JobApplicationPage() {
                                     <div className="application-task__meta">
                                         Completed {formatDateTime(task.completed_at)}
                                     </div>
+                                    <div className="application-item__actions">
+                                        <button
+                                            type="button"
+                                            className="application-item__edit"
+                                            onClick={() => startEditingTask(task)}
+                                            aria-label={`Edit ${task.title}`}
+                                            title="Edit"
+                                        >
+                                            <FaEdit />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="application-item__delete"
+                                            onClick={() => setDeletePlannerTarget({ type: "task", item: task })}
+                                            aria-label={`Delete ${task.title}`}
+                                            title="Delete"
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+                                    {editingTaskId === task.id && (
+                                        <div className="application-inline-form">
+                                            <input
+                                                name="title"
+                                                placeholder="Task title"
+                                                value={taskEditForm.title}
+                                                onChange={handleTaskEditFormChange}
+                                            />
+                                            <textarea
+                                                name="description"
+                                                placeholder="Description"
+                                                value={taskEditForm.description}
+                                                onChange={handleTaskEditFormChange}
+                                            />
+                                            <div className="task-form__row">
+                                                <label>
+                                                    <span>Due</span>
+                                                    <input
+                                                        type="datetime-local"
+                                                        name="due_at"
+                                                        value={taskEditForm.due_at}
+                                                        onChange={handleTaskEditFormChange}
+                                                    />
+                                                </label>
+                                                <label className="task-form__checkbox">
+                                                    <input
+                                                        type="checkbox"
+                                                        name="is_required"
+                                                        checked={taskEditForm.is_required}
+                                                        onChange={handleTaskEditFormChange}
+                                                    />
+                                                    <span>Required</span>
+                                                </label>
+                                            </div>
+                                            <div className="form-btns">
+                                                <button className="secondary-btn" type="button" onClick={cancelEditingTask}>
+                                                    Cancel
+                                                </button>
+                                                <button className="primary-btn" type="button" onClick={() => handleSaveTaskEdit(task)}>
+                                                    Save
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         ))}
@@ -710,26 +1102,11 @@ function JobApplicationPage() {
                             <option value="OTHER">Other</option>
                         </select>
 
-                        <div className="application-event-form__time-grid">
-                            <label>
-                                <span>Starts</span>
-                                <input
-                                    type="datetime-local"
-                                    name="starts_at"
-                                    value={eventForm.starts_at}
-                                    onChange={handleEventFormChange}
-                                />
-                            </label>
-                            <label>
-                                <span>Ends</span>
-                                <input
-                                    type="datetime-local"
-                                    name="ends_at"
-                                    value={eventForm.ends_at}
-                                    onChange={handleEventFormChange}
-                                />
-                            </label>
-                        </div>
+                        <EventScheduleFields
+                            startsAt={eventForm.starts_at}
+                            endsAt={eventForm.ends_at}
+                            onChange={handleEventScheduleChange}
+                        />
 
                         <input
                             name="location"
@@ -845,6 +1222,102 @@ function JobApplicationPage() {
                                         {event.overlap_warning}
                                     </div>
                                 )}
+                                <div className="application-item__actions">
+                                    <button
+                                        type="button"
+                                        className="application-item__edit"
+                                        onClick={() => startEditingEvent(event)}
+                                        aria-label={`Edit ${event.title}`}
+                                        title="Edit"
+                                    >
+                                        <FaEdit />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="application-item__delete"
+                                        onClick={() => setDeletePlannerTarget({ type: "event", item: event })}
+                                        aria-label={`Delete ${event.title}`}
+                                        title="Delete"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                                {editingEventId === event.id && (
+                                    <div className="application-inline-form">
+                                        <input
+                                            name="title"
+                                            placeholder="Event title"
+                                            value={eventEditForm.title}
+                                            onChange={handleEventEditFormChange}
+                                        />
+                                        <select
+                                            name="event_type"
+                                            value={eventEditForm.event_type}
+                                            onChange={handleEventEditFormChange}
+                                        >
+                                            <option value="INTERVIEW">Interview</option>
+                                            <option value="CALL">Call</option>
+                                            <option value="DEADLINE">Deadline</option>
+                                            <option value="OTHER">Other</option>
+                                        </select>
+                                        <EventScheduleFields
+                                            startsAt={eventEditForm.starts_at}
+                                            endsAt={eventEditForm.ends_at}
+                                            onChange={handleEventEditScheduleChange}
+                                        />
+                                        <input
+                                            name="location"
+                                            placeholder="Location"
+                                            value={eventEditForm.location}
+                                            onChange={handleEventEditFormChange}
+                                        />
+                                        <input
+                                            name="meeting_link"
+                                            placeholder="Meeting link"
+                                            value={eventEditForm.meeting_link}
+                                            onChange={handleEventEditFormChange}
+                                        />
+                                        <div className="application-event-form__time-grid">
+                                            <input
+                                                name="contact_name"
+                                                placeholder="Contact name"
+                                                value={eventEditForm.contact_name}
+                                                onChange={handleEventEditFormChange}
+                                            />
+                                            <input
+                                                name="contact_email"
+                                                placeholder="Contact email"
+                                                value={eventEditForm.contact_email}
+                                                onChange={handleEventEditFormChange}
+                                            />
+                                        </div>
+                                        <input
+                                            name="contact_phone"
+                                            placeholder="Contact phone"
+                                            value={eventEditForm.contact_phone}
+                                            onChange={handleEventEditFormChange}
+                                        />
+                                        <textarea
+                                            name="notes"
+                                            placeholder="Notes"
+                                            value={eventEditForm.notes}
+                                            onChange={handleEventEditFormChange}
+                                        />
+                                        <div className="form-btns">
+                                            <button className="secondary-btn" type="button" onClick={cancelEditingEvent}>
+                                                Cancel
+                                            </button>
+                                            <button
+                                                className="primary-btn"
+                                                type="button"
+                                                onClick={() => handleSaveEventEdit(event)}
+                                                disabled={submittingEvent}
+                                            >
+                                                {submittingEvent ? "Saving..." : "Save"}
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -864,6 +1337,82 @@ function JobApplicationPage() {
                                 <div className="application-event__meta">
                                     {formatDateTime(event.starts_at)}
                                 </div>
+                                <div className="application-item__actions">
+                                    <button
+                                        type="button"
+                                        className="application-item__edit"
+                                        onClick={() => startEditingEvent(event)}
+                                        aria-label={`Edit ${event.title}`}
+                                        title="Edit"
+                                    >
+                                        <FaEdit />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="application-item__delete"
+                                        onClick={() => setDeletePlannerTarget({ type: "event", item: event })}
+                                        aria-label={`Delete ${event.title}`}
+                                        title="Delete"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                                {editingEventId === event.id && (
+                                    <div className="application-inline-form">
+                                        <input
+                                            name="title"
+                                            placeholder="Event title"
+                                            value={eventEditForm.title}
+                                            onChange={handleEventEditFormChange}
+                                        />
+                                        <select
+                                            name="event_type"
+                                            value={eventEditForm.event_type}
+                                            onChange={handleEventEditFormChange}
+                                        >
+                                            <option value="INTERVIEW">Interview</option>
+                                            <option value="CALL">Call</option>
+                                            <option value="DEADLINE">Deadline</option>
+                                            <option value="OTHER">Other</option>
+                                        </select>
+                                        <EventScheduleFields
+                                            startsAt={eventEditForm.starts_at}
+                                            endsAt={eventEditForm.ends_at}
+                                            onChange={handleEventEditScheduleChange}
+                                        />
+                                        <input
+                                            name="location"
+                                            placeholder="Location"
+                                            value={eventEditForm.location}
+                                            onChange={handleEventEditFormChange}
+                                        />
+                                        <input
+                                            name="meeting_link"
+                                            placeholder="Meeting link"
+                                            value={eventEditForm.meeting_link}
+                                            onChange={handleEventEditFormChange}
+                                        />
+                                        <textarea
+                                            name="notes"
+                                            placeholder="Notes"
+                                            value={eventEditForm.notes}
+                                            onChange={handleEventEditFormChange}
+                                        />
+                                        <div className="form-btns">
+                                            <button className="secondary-btn" type="button" onClick={cancelEditingEvent}>
+                                                Cancel
+                                            </button>
+                                            <button
+                                                className="primary-btn"
+                                                type="button"
+                                                onClick={() => handleSaveEventEdit(event)}
+                                                disabled={submittingEvent}
+                                            >
+                                                {submittingEvent ? "Saving..." : "Save"}
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -898,7 +1447,7 @@ function JobApplicationPage() {
                                 setEditingContactId(contact.id);
                                 setShowContactForm(false);
                             }}><FaEdit /></button>
-                            <button className="delete-btn" onClick={() => handleDeleteContact(contact.id)}>×</button>
+                            <button className="delete-btn" onClick={() => handleDeleteContact(contact)}>×</button>
                         </div>
                     ))}
 
@@ -968,7 +1517,7 @@ function JobApplicationPage() {
                                 setEditingNoteId(note.id);
                                 setShowNotesForm(false);
                             }}><FaEdit /></button>
-                            <button className="delete-btn" onClick={() => handleDeleteNotes(note.id)}>×</button>
+                            <button className="delete-btn" onClick={() => handleDeleteNotes(note)}>×</button>
                         </div>
                     ))}
 
@@ -1021,6 +1570,41 @@ function JobApplicationPage() {
                 cancelText="Edit event"
                 onConfirm={handleConfirmEventConflict}
                 onCancel={handleCancelEventConflict}
+            />
+            <ConfirmModal
+                isOpen={!!deletePlannerTarget}
+                title={`Delete ${deletePlannerTarget?.type || "item"}?`}
+                message={
+                    deletePlannerTarget
+                        ? `Delete "${deletePlannerTarget.item.title}"? This action cannot be undone.`
+                        : ""
+                }
+                confirmText="Delete"
+                cancelText="Cancel"
+                onConfirm={handleConfirmPlannerDelete}
+                onCancel={() => setDeletePlannerTarget(null)}
+            />
+            <ConfirmModal
+                isOpen={!!deleteContentTarget}
+                title={`Delete ${deleteContentTarget?.type || "item"}?`}
+                message={
+                    deleteContentTarget
+                        ? `Are you sure you want to delete "${getDeleteContentLabel()}"? This action cannot be undone.`
+                        : ""
+                }
+                confirmText="Delete"
+                cancelText="Cancel"
+                onConfirm={handleConfirmContentDelete}
+                onCancel={() => setDeleteContentTarget(null)}
+            />
+            <ConfirmModal
+                isOpen={messageModal.isOpen}
+                title={messageModal.title}
+                message={messageModal.message}
+                confirmText="OK"
+                cancelText=""
+                onConfirm={closeMessageModal}
+                onCancel={closeMessageModal}
             />
         </div>
     );

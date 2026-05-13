@@ -37,9 +37,11 @@ export default function useKanban() {
     return () => controller.abort();
   }, []);
 
-  async function loadBoard({ signal } = {}) {
+  async function loadBoard({ signal, silent = false } = {}) {
     try {
-      setLoading(true);
+      if (!silent) {
+        setLoading(true);
+      }
       setError(null);
 
       const data = await fetchKanbanApplications({ signal });
@@ -60,7 +62,9 @@ export default function useKanban() {
       if (err.name === "AbortError") return;
       setError(err.message);
     } finally {
-      if (!signal?.aborted) setLoading(false);
+      if (!signal?.aborted && !silent) {
+        setLoading(false);
+      }
     }
   }
 
@@ -69,11 +73,11 @@ export default function useKanban() {
     dragFromCol.current = fromColumnId;
   }
 
-  async function handleDrop(toColumnId) {
+  function handleDrop(toColumnId) {
     const cardId = dragCardId.current;
     const fromColId = dragFromCol.current;
 
-    if (!cardId || fromColId === toColumnId) return;
+    if (!cardId || fromColId === toColumnId) return false;
 
     setGrouped((prev) => {
       const card = prev[fromColId]?.find((c) => c.id === cardId);
@@ -89,19 +93,25 @@ export default function useKanban() {
       };
     });
 
-    try {
-      await updateApplicationStatus(cardId, toColumnId);
-      await loadBoard();
-    } catch (err) {
-      setError(`Could not move card: ${err.message}`);
-      loadBoard();
-    } finally {
-      dragCardId.current = null;
-      dragFromCol.current = null;
-    }
+    void (async () => {
+      try {
+        await updateApplicationStatus(cardId, toColumnId);
+        await loadBoard({ silent: true });
+      } catch (err) {
+        setError(`Could not move card: ${err.message}`);
+        loadBoard({ silent: true });
+      } finally {
+        dragCardId.current = null;
+        dragFromCol.current = null;
+      }
+    })();
+
+    return true;
   }
 
-  async function changeCardStatus(cardId, newStatus) {
+  function changeCardStatus(cardId, newStatus) {
+    let didMove = false;
+
     setGrouped((prev) => {
       let movedCard = null;
       const next = { ...prev };
@@ -117,19 +127,26 @@ export default function useKanban() {
       }
 
       if (movedCard) {
+        didMove = true;
         next[newStatus] = [...(next[newStatus] || []), movedCard];
       }
 
       return next;
     });
 
-    try {
-      await updateApplicationStatus(cardId, newStatus);
-      await loadBoard();
-    } catch (err) {
-      setError(`Could not update status: ${err.message}`);
-      loadBoard();
-    }
+    if (!didMove) return false;
+
+    void (async () => {
+      try {
+        await updateApplicationStatus(cardId, newStatus);
+        await loadBoard({ silent: true });
+      } catch (err) {
+        setError(`Could not update status: ${err.message}`);
+        loadBoard({ silent: true });
+      }
+    })();
+
+    return true;
   }
 
   async function createCard(formData) {

@@ -15,6 +15,8 @@ export default function KanbanColumn({
   onInterestChange,
   interestFilter,
   restoredBadges,
+  openStatusMenuCardId,
+  onStatusMenuToggle,
 })  {
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -72,6 +74,8 @@ export default function KanbanColumn({
             onInterestChange={onInterestChange}
             interestFilter={interestFilter}
             restoreBadge={restoredBadges?.[String(app.id)]}
+            isStatusMenuOpen={openStatusMenuCardId === app.id}
+            onStatusMenuToggle={onStatusMenuToggle}
           />
         ))}
 

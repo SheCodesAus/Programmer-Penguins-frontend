@@ -3,7 +3,6 @@ import { createRoot } from "react-dom/client";
 import {
   createBrowserRouter,
   RouterProvider,
-  Navigate,
 } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
@@ -24,17 +23,9 @@ import { AuthProvider } from "./components/AuthProvider.jsx";
 import ArchivePage from "./pages/ArchivePage.jsx";
 import TrashPage from "./pages/TrashPage.jsx";
 import TasksAgendaPage from "./pages/TasksAgendaPage.jsx";
+import ContactsPage from "./pages/ContactsPage.jsx";
 import EditProfileModal from "./components/EditProfileModal.jsx";
-
-function ProtectedRoute({ children }) {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return children;
-}
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 const router = createBrowserRouter([
   {
@@ -84,6 +75,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <TasksAgendaPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "contacts",
+        element: (
+          <ProtectedRoute>
+            <ContactsPage />
           </ProtectedRoute>
         ),
       },

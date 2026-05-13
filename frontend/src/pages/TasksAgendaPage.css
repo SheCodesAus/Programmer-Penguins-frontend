@@ -50,24 +50,43 @@
 .tasks-panel,
 .agenda-panel {
   display: grid;
+  gap: 18px;
+}
+
+.planner-section {
+  position: relative;
+  display: grid;
   gap: 14px;
+  padding: 18px;
+  border: 1px solid #bfdbfe;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
 }
 
 .tasks-panel__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .tasks-panel__header h2,
 .event-form h2,
-.completed-tasks h2 {
+.completed-tasks h2,
+.planner-create-form h3 {
   margin: 0;
   font-family: var(--heading-font);
   font-size: 1.15rem;
 }
 
-.tasks-panel__header span {
+.tasks-panel__header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tasks-panel__header-actions span {
   min-width: 30px;
   height: 30px;
   display: inline-flex;
@@ -79,18 +98,43 @@
   font-weight: 800;
 }
 
+.planner-add-button {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dbeafe;
+  border-radius: 50%;
+  background: #ffffff;
+  color: var(--primary);
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: 800;
+  line-height: 1;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+
+.planner-add-button:hover {
+  background: var(--primary);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
 .tasks-list,
 .events-list,
 .completed-tasks,
-.event-form {
+.event-form,
+.planner-create-form {
   display: grid;
   gap: 12px;
 }
 
 .task-item,
 .event-item,
-.completed-task,
-.event-form {
+.completed-task {
+  position: relative;
   background: var(--cardbackground);
   border: 1px solid var(--secondary);
   border-radius: 12px;
@@ -100,7 +144,9 @@
 .task-item {
   display: flex;
   gap: 12px;
-  padding: 16px;
+  padding: 16px 82px 16px 16px;
+  align-items: flex-start;
+  flex-wrap: wrap;
 }
 
 .task-item--overdue {
@@ -183,25 +229,25 @@
 }
 
 .event-item {
-  padding: 16px;
+  padding: 16px 82px 16px 16px;
 }
 
-.event-item div {
+.event-item > div:first-child {
   display: grid;
   gap: 5px;
 }
 
 .completed-task {
-  padding: 12px 14px;
+  padding: 12px 82px 12px 14px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
+  flex-wrap: wrap;
   border: 1px solid #bbf7d0;
   background: #f0fdf4;
   color: #166534;
   text-align: left;
-  cursor: pointer;
 }
 
 .completed-task span {
@@ -212,13 +258,37 @@
   color: #15803d;
 }
 
-.event-form {
+.completed-task__toggle {
+  min-width: 0;
+  flex: 1;
+  display: grid;
+  gap: 4px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-align: left;
+}
+
+.event-form,
+.planner-create-form {
   padding: 18px;
+}
+
+.planner-create-form {
+  border: 1px solid #dbeafe;
+  border-radius: 14px;
+  background: #f8fbff;
 }
 
 .event-form input,
 .event-form select,
-.event-form textarea {
+.event-form textarea,
+.planner-create-form input,
+.planner-create-form select,
+.planner-create-form textarea {
   width: 100%;
   min-height: 42px;
   border: 1px solid var(--secondary);
@@ -230,9 +300,24 @@
   font-size: 0.9rem;
 }
 
-.event-form textarea {
+.event-form textarea,
+.planner-create-form textarea {
   min-height: 90px;
   resize: vertical;
+}
+
+.planner-create-form input:focus,
+.planner-create-form select:focus,
+.planner-create-form textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(22, 113, 238, 0.14);
+}
+
+.planner-create-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 .event-form__time-grid {
@@ -252,10 +337,155 @@
   font-weight: 800;
 }
 
+.planner-item__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.planner-item__actions--compact {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+}
+
+.planner-item__actions button {
+  cursor: pointer;
+  font-family: var(--body-font);
+  transition: all 0.15s ease;
+}
+
+.planner-item__edit,
+.planner-item__delete {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1;
+  padding: 0;
+}
+
+.planner-item__edit svg {
+  width: 13px;
+  height: 13px;
+}
+
+.planner-item__edit {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.planner-item__edit:hover {
+  background: #bbf7d0;
+  color: #166534;
+  transform: translateY(-1px);
+}
+
+.planner-item__delete {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.planner-item__delete:hover {
+  background: #fee2e2;
+  color: #dc2626;
+  transform: translateY(-1px);
+}
+
+.planner-item__actions .primary-btn,
+.planner-item__actions .secondary-btn {
+  width: auto;
+  height: auto;
+  border-radius: 999px;
+  color: #ffffff;
+  padding: 9px 16px;
+}
+
+.planner-item__actions .secondary-btn {
+  color: var(--text);
+}
+
+.planner-edit-form {
+  width: 100%;
+  display: grid;
+  gap: 10px;
+}
+
+.planner-edit-form--full {
+  flex-basis: 100%;
+  margin-top: 2px;
+}
+
+.planner-edit-form input,
+.planner-edit-form select,
+.planner-edit-form textarea {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid var(--secondary);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #ffffff;
+  color: var(--text);
+  font-family: var(--body-font);
+  font-size: 0.9rem;
+}
+
+.planner-edit-form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.planner-edit-form input:focus,
+.planner-edit-form select:focus,
+.planner-edit-form textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(22, 113, 238, 0.14);
+}
+
+.planner-edit-form__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.planner-edit-form__grid label {
+  display: grid;
+  gap: 6px;
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.planner-edit-form__checkbox {
+  min-height: 42px;
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.planner-edit-form__checkbox input {
+  width: 16px;
+  min-height: 16px;
+  padding: 0;
+}
+
 .tasks-agenda-page__message,
 .tasks-agenda-page__error {
   margin: 14px 0;
   color: #64748b;
+}
+
+.planner-section .tasks-agenda-page__message {
+  margin: 4px 0;
 }
 
 .tasks-agenda-page__error {
@@ -289,6 +519,10 @@
 
   .tasks-agenda-page__header h1 {
     font-size: 1.6rem;
+  }
+
+  .planner-section {
+    padding: 14px;
   }
 
   .event-form__time-grid {

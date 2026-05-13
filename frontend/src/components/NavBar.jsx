@@ -6,7 +6,7 @@ import { useState } from "react";
 import Footer from "./Footer";
 
 function NavBar() {
-  const { auth, setAuth } = useAuth();
+  const { setAuth } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -34,6 +34,11 @@ function NavBar() {
           {isLoggedIn && (
             <NavLink className="nav-link" to="/dashboard">
               Dashboard
+            </NavLink>
+          )}
+          {isLoggedIn && (
+            <NavLink className="nav-link" to="/contacts">
+              Contacts
             </NavLink>
           )}
           {isLoggedIn && (
@@ -69,6 +74,15 @@ function NavBar() {
         <NavLink to="/dashboard" onClick={() => setMenuOpen(false)}>
           Dashboard
         </NavLink>
+
+        {isLoggedIn && (
+          <NavLink
+            to="/contacts"
+            onClick={() => setMenuOpen(false)}
+          >
+            Contacts
+          </NavLink>
+        )}
 
         {isLoggedIn && (
           <NavLink
