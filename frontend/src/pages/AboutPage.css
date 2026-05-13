@@ -19,24 +19,24 @@
 .about-text h2 {
   font-size: 2.4rem;
   font-weight: 700;
-  color: #1e293b;
+  color: #1E293B;
   margin-bottom: 24px;
   line-height: 1.2;
 }
 
 .highlight {
-  color: #2563eb;
+  color: #2563EB;
 }
 
 .about-text p {
   font-size: 1.05rem;
-  color: #64748b;
+  color: #64748B;
   line-height: 1.8;
   margin-bottom: 16px;
 }
 
 .about-text strong {
-  color: #1e293b;
+  color: #1E293B;
 }
 
 .about-btn {
@@ -55,8 +55,8 @@
 }
 
 .about-card {
-  background: #f8fafc;
-  border: 1.5px solid #e2e8f0;
+  background: #F8FAFC;
+  border: 1.5px solid #E2E8F0;
   border-radius: 14px;
   padding: 24px;
   display: flex;
@@ -79,13 +79,13 @@
 .about-card h4 {
   font-size: 1rem;
   font-weight: 700;
-  color: #1e293b;
+  color: #1E293B;
   margin-bottom: 4px;
 }
 
 .about-card p {
   font-size: 0.9rem;
-  color: #64748b;
+  color: #64748B;
   line-height: 1.6;
 }
 

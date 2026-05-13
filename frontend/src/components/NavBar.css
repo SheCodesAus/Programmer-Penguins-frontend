@@ -20,6 +20,10 @@
   background: white;
 }
 
+.nav-link {
+  color: var(--primary);
+}
+
 .logo {
   height: 6vh;
 }
@@ -137,12 +141,12 @@
     background: #f3f4f6;
   }
 
-.mobile-menu__logout {
-  border: none;
-  background: #e2e2e2;
-  color: var(--text);
-  cursor: pointer;
-}
+  .mobile-menu__logout {
+    border: none;
+    background: #e2e2e2;
+    color: var(--text);
+    cursor: pointer;
+  }
 
 .mobile-menu__logout:hover {
   background: #b4b4b4;

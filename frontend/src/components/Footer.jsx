@@ -48,14 +48,14 @@ export default function Footer() {
         <div className="footer__col footer__col--pages">
           <h4 className="footer__heading">Pages</h4>
 
-          <nav className="footer__links" aria-label="Footer pages">
+          <div className="footer__links" aria-label="Footer pages">
             <Link to="/about" className="footer__link">
               About
             </Link>
             <Link to="/contact" className="footer__link">
               Contact
             </Link>
-          </nav>
+          </div>
         </div>
       </div>
 

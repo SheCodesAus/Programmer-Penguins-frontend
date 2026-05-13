@@ -28,15 +28,14 @@ function NavBar() {
           <NavLink className="nav-link logo-link" to="/">
             <img src={logo} className="logo" alt="Job Buddy logo" />
           </NavLink>
-
-          <div className="desktop-links">
-            <NavLink className="nav-link" to="/dashboard">
-              Dashboard
-            </NavLink>
-          </div>
         </div>
 
         <div className="nav-right">
+          {isLoggedIn && (
+            <NavLink className="nav-link" to="/dashboard">
+              Dashboard
+            </NavLink>
+          )}
           {isLoggedIn && (
             <NavLink className="nav-link" to={`/profile`}>
               My profile

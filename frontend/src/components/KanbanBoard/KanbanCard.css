@@ -12,10 +12,7 @@
   padding: 14px 12px 14px 0;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
   cursor: grab;
-  transition:
-    box-shadow 0.15s,
-    opacity 0.15s,
-    transform 0.15s;
+  transition: box-shadow 0.15s, opacity 0.15s, transform 0.15s;
   overflow: visible;
   user-select: none;
 }
@@ -53,6 +50,7 @@
   align-items: center;
   justify-content: center;
   background: #f1f5f9;
+  margin: 0 0 0 6px;
 }
 
 .kanban-card__logo img {
@@ -177,9 +175,7 @@
   cursor: pointer;
   padding: 4px;
   line-height: 1;
-  transition:
-    color 0.15s,
-    transform 0.15s;
+  transition: color 0.15s, transform 0.15s;
   flex-shrink: 0;
   margin-right: 4px;
 }
@@ -215,7 +211,6 @@
   cursor: pointer;
   white-space: nowrap;
 }
-
 
 .kanban-card__status-button span:first-child {
   overflow: hidden;
@@ -346,9 +341,7 @@
   cursor: pointer;
   padding: 2px;
   line-height: 1;
-  transition:
-    transform 0.15s ease,
-    color 0.15s ease;
+  transition: transform 0.15s ease, color 0.15s ease;
 }
 
 .kanban-card__heart:hover {

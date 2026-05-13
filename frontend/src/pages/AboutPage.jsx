@@ -2,16 +2,16 @@ import { useNavigate } from "react-router-dom";
 import "./AboutPage.css";
 
 function About() {
-  const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  function handleGetStarted() {
-    const token = localStorage.getItem("token");
-    navigate(token ? "/dashboard" : "/login");
-  }
+  function handleGetStarted() {
+    const token = localStorage.getItem("token");
+    navigate(token ? "/dashboard" : "/login");
+  }
 
-  return (
-    <section id="about">
-      <div className="about-container">
+  return (
+    <section id="about">
+      <div className="about-container">
 
         <div className="about-text">
           <h2>Why <span className="highlight">JobTracker</span>?</h2>
@@ -30,8 +30,8 @@ function About() {
           </button>
         </div>
 
-        <div className="about-cards">
-          <div className="about-card">
+        <div className="about-cards">
+          <div className="about-card">
             <span className="card-icon">📋</span>
             <h4>Track Applications</h4>
             <p>Log every job you apply to and never lose track of where you stand.</p>
@@ -45,12 +45,12 @@ function About() {
             <span className="card-icon">🎯</span>
             <h4>Land the Role</h4>
             <p>Stay focused and organised so every opportunity gets your best shot.</p>
-          </div>
-        </div>
+          </div>
+        </div>
 
-      </div>
-    </section>
-  );
+      </div>
+    </section>
+  );
 }
 
 export default About;
