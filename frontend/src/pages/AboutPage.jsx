@@ -25,7 +25,7 @@ function About() {
             Track applications, monitor progress, and move closer to your next
             opportunity every single day.
           </p>
-          <button type="button" className="about-btn" onClick={handleGetStarted}>
+          <button type="button" className="primary-btn about-btn" onClick={handleGetStarted}>
             Get Started
           </button>
         </div>

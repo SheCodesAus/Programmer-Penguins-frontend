@@ -6,10 +6,13 @@
 }
 
 #navbar nav {
+  position: relative;
+  z-index: 2;
   width: 100%;
   box-sizing: border-box;
   font-family: sans-serif;
-  box-shadow: 0 4px 4px 0 rgba(79, 79, 79, 0.1);
+  box-shadow: 0 5px 14px rgba(79, 79, 79, 0.16);
+  border-bottom: 1px solid #e2e2e2;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -143,6 +146,7 @@
 
 .mobile-menu__logout:hover {
   background: #b4b4b4;
+}
 }
 
 .site-main {
