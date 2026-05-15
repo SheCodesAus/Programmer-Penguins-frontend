@@ -2,17 +2,16 @@ import { useNavigate } from "react-router-dom";
 import "./AboutPage.css";
 
 function About() {
-<<<<<<< feature/job-application-tasks
-  const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  function handleGetStarted() {
-    const token = localStorage.getItem("token");
-    navigate(token ? "/dashboard" : "/login");
-  }
+  function handleGetStarted() {
+    const token = localStorage.getItem("token");
+    navigate(token ? "/dashboard" : "/login");
+  }
 
-  return (
-    <section id="about">
-      <div className="about-container">
+  return (
+    <section id="about">
+      <div className="about-container">
 
         <div className="about-text">
           <h2>Why <span className="highlight">JobTracker</span>?</h2>
@@ -26,45 +25,13 @@ function About() {
             Track applications, monitor progress, and move closer to your next
             opportunity every single day.
           </p>
-          <button type="button" className="about-btn" onClick={handleGetStarted}>
+          <button type="button" className="primary-btn about-btn" onClick={handleGetStarted}>
             Get Started
           </button>
         </div>
 
-        <div className="about-cards">
-          <div className="about-card">
-=======
-  const navigate = useNavigate();
-
-  function handleGetStarted() {
-    const token = localStorage.getItem("token");
-    navigate(token ? "/dashboard" : "/login");
-  }
-
-  return (
-    <section id="about">
-      <div className="about-container">
-
-        <div className="about-text">
-          <h2>Why <span className="highlight">JobTracker</span>?</h2>
-          <p>
-            Job hunting is tough. Staying organised shouldn't be. Whether you're
-            sending out your first application or your fiftieth, our job tracker
-            keeps everything in one place so you can focus on what matters —
-            <strong> landing the role.</strong>
-          </p>
-          <p>
-            Track applications, monitor progress, and move closer to your next
-            opportunity every single day.
-          </p>
-          <button type="button" className="about-btn" onClick={handleGetStarted}>
-            Get Started
-          </button>
-        </div>
-
         <div className="about-cards">
           <div className="about-card">
->>>>>>> main
             <span className="card-icon">📋</span>
             <h4>Track Applications</h4>
             <p>Log every job you apply to and never lose track of where you stand.</p>
@@ -78,17 +45,6 @@ function About() {
             <span className="card-icon">🎯</span>
             <h4>Land the Role</h4>
             <p>Stay focused and organised so every opportunity gets your best shot.</p>
-<<<<<<< feature/job-application-tasks
-          </div>
-        </div>
-
-      </div>
-    </section>
-  );
-}
-
-export default About;
-=======
           </div>
         </div>
 
@@ -98,4 +54,3 @@ export default About;
 }
 
 export default About;
->>>>>>> main

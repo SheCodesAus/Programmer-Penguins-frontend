@@ -28,7 +28,13 @@ async function apiFetch(path, options = {}) {
       `${res.status} ${res.statusText}${bodyText ? ` – ${bodyText}` : ""}`,
     );
   }
-  return res.json();
+
+  if (res.status === 204) {
+    return null;
+  }
+
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
 }
 
 function toApiDateTime(value) {
@@ -112,6 +118,10 @@ export async function updateApplication(id, data) {
   });
 }
 
+export async function fetchApplicationContacts() {
+  return apiFetch(`${APPLICATIONS_PATH}/contacts/`);
+}
+
 export async function fetchApplicationTasks({ applicationId, completed } = {}) {
   const params = new URLSearchParams();
 
@@ -135,6 +145,22 @@ export async function createApplicationTask(data) {
       ...data,
       due_at: toApiDateTime(data.due_at),
     }),
+  });
+}
+
+export async function updateApplicationTask(id, data) {
+  return apiFetch(`${APPLICATIONS_PATH}/tasks/${id}/`, {
+    method: "PATCH",
+    body: JSON.stringify({
+      ...data,
+      due_at: toApiDateTime(data.due_at),
+    }),
+  });
+}
+
+export async function deleteApplicationTask(id) {
+  return apiFetch(`${APPLICATIONS_PATH}/tasks/${id}/`, {
+    method: "DELETE",
   });
 }
 
@@ -174,5 +200,22 @@ export async function createApplicationEvent(data) {
       starts_at: toApiDateTime(data.starts_at),
       ends_at: toApiDateTime(data.ends_at),
     }),
+  });
+}
+
+export async function updateApplicationEvent(id, data) {
+  return apiFetch(`${APPLICATIONS_PATH}/events/${id}/`, {
+    method: "PATCH",
+    body: JSON.stringify({
+      ...data,
+      starts_at: toApiDateTime(data.starts_at),
+      ends_at: toApiDateTime(data.ends_at),
+    }),
+  });
+}
+
+export async function deleteApplicationEvent(id) {
+  return apiFetch(`${APPLICATIONS_PATH}/events/${id}/`, {
+    method: "DELETE",
   });
 }

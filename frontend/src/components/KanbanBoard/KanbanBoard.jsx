@@ -31,6 +31,7 @@ export default function KanbanBoard() {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [interestFilter, setInterestFilter] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [openStatusMenuCardId, setOpenStatusMenuCardId] = useState(null);
   const [restoredBadges, setRestoredBadges] = useState(() =>
     getRestoredApplicationBadges()
   );
@@ -64,7 +65,11 @@ export default function KanbanBoard() {
   }
 
   async function handleStatusChange(cardId, newStatus) {
-    await changeCardStatus(cardId, newStatus);
+    setOpenStatusMenuCardId(null);
+
+    const didMove = changeCardStatus(cardId, newStatus);
+
+    if (!didMove) return;
 
     showToast({
       text: getMotivationMessage({
@@ -74,8 +79,16 @@ export default function KanbanBoard() {
     });
   }
 
-  async function handleDropWithToast(toColumnId) {
-    await handleDrop(toColumnId);
+  function handleStatusMenuToggle(cardId) {
+    setOpenStatusMenuCardId((currentCardId) =>
+      currentCardId === cardId ? null : cardId
+    );
+  }
+
+  function handleDropWithToast(toColumnId) {
+    const didMove = handleDrop(toColumnId);
+
+    if (!didMove) return;
 
     showToast({
       text: getMotivationMessage({
@@ -294,11 +307,14 @@ export default function KanbanBoard() {
             onInterestChange={handleInterestChange}
             interestFilter={interestFilter}
             restoredBadges={restoredBadges}
+            openStatusMenuCardId={openStatusMenuCardId}
+            onStatusMenuToggle={handleStatusMenuToggle}
           />
         ))}
       </div>
 
       <NewApplicationModal
+        key={addingToColumn ?? "closed"}
         isOpen={addingToColumn !== null}
         defaultStatus={addingToColumn}
         onClose={() => setAddingToColumn(null)}

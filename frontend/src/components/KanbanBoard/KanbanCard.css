@@ -28,6 +28,10 @@
   transform: scale(0.98);
 }
 
+.kanban-card--status-open {
+  z-index: 30;
+}
+
 /* ── Left accent bar ── */
 /* Uses the CSS variable --accent injected by the parent component */
 .kanban-card__accent {
@@ -225,7 +229,7 @@
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  z-index: 20;
+  z-index: 100;
   width: 160px;
   max-width: calc(100vw - 48px);
   padding: 8px;

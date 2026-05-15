@@ -369,13 +369,7 @@ p {
     padding: 56px 20px;
   }
 
-  .primary-btn {
-    background-color: white;
-    color: white;
-    cursor: pointer;
-    padding: 14px 28px;
-    font-size: 1rem;
-    border-radius: 999px;
-    border: none;
+  .banner-content .primary-btn {
+    margin-top: 24px;
   }
 }

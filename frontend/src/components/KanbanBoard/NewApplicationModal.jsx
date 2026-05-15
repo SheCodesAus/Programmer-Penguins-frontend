@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { COLUMNS } from "../../hooks/useKanban";
 import { extractJobFromUrl } from "../../api/applications";
 import { WandSparkles } from "lucide-react";
@@ -26,12 +26,52 @@ const EMPTY_FORM = {
   currency: "AUD",
 };
 
+function isValidDateParts(year, month, day) {
+  const date = new Date(Date.UTC(year, month - 1, day));
+
+  return (
+    date.getUTCFullYear() === year &&
+    date.getUTCMonth() === month - 1 &&
+    date.getUTCDate() === day
+  );
+}
+
+function toDateInputValue(value) {
+  if (!value || typeof value !== "string") return "";
+
+  const trimmedValue = value.trim();
+  const isoDateMatch = trimmedValue.match(/^(\d{4})-(\d{2})-(\d{2})/);
+
+  if (isoDateMatch) {
+    const [, year, month, day] = isoDateMatch;
+    const parsedYear = Number(year);
+    const parsedMonth = Number(month);
+    const parsedDay = Number(day);
+
+    return isValidDateParts(parsedYear, parsedMonth, parsedDay)
+      ? `${year}-${month}-${day}`
+      : "";
+  }
+
+  const parsedDate = new Date(trimmedValue);
+
+  if (Number.isNaN(parsedDate.getTime())) return "";
+
+  const year = parsedDate.getFullYear();
+  const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
+  const day = String(parsedDate.getDate()).padStart(2, "0");
+
+  return isValidDateParts(year, Number(month), Number(day))
+    ? `${year}-${month}-${day}`
+    : "";
+}
+
 function cleanFormData(form) {
   return {
     ...form,
     status: form.status || "FOUND",
-    date_posted: form.date_posted || null,
-    date_applied: form.date_applied || null,
+    date_posted: toDateInputValue(form.date_posted) || null,
+    date_applied: toDateInputValue(form.date_applied) || null,
     salary_min: form.salary_min === "" ? null : form.salary_min,
     salary_max: form.salary_max === "" ? null : form.salary_max,
     source_platform: form.source_platform || "",
@@ -46,23 +86,15 @@ export default function NewApplicationModal({
   onClose,
   onCreate,
 }) {
-  const [form, setForm] = useState(EMPTY_FORM);
+  const [form, setForm] = useState({
+    ...EMPTY_FORM,
+    status: defaultStatus || "FOUND",
+  });
   const [formErrors, setFormErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [jobLink, setJobLink] = useState("");
   const [extracting, setExtracting] = useState(false);
-
-  useEffect(() => {
-    if (isOpen) {
-      setForm({ ...EMPTY_FORM, status: defaultStatus || "FOUND" });
-      setFormErrors({});
-      setError(null);
-      setJobLink("");
-      setSubmitting(false);
-      setExtracting(false);
-    }
-  }, [isOpen, defaultStatus]);
 
   if (!isOpen) return null;
 
@@ -96,6 +128,8 @@ export default function NewApplicationModal({
 
     try {
       const data = await extractJobFromUrl(jobLink);
+      const extractedDatePosted = toDateInputValue(data.date_posted);
+      const extractedDateApplied = toDateInputValue(data.date_applied);
 
       setForm((prev) => ({
         ...prev,
@@ -104,8 +138,8 @@ export default function NewApplicationModal({
         company_name: data.company_name || prev.company_name,
         source_platform: data.source_platform || prev.source_platform,
         source_details: data.source_details || prev.source_details,
-        date_posted: data.date_posted || prev.date_posted,
-        date_applied: data.date_applied || prev.date_applied,
+        date_posted: extractedDatePosted || prev.date_posted,
+        date_applied: extractedDateApplied || prev.date_applied,
         salary_min: data.salary_min ?? prev.salary_min,
         salary_max: data.salary_max ?? prev.salary_max,
         currency: data.currency || prev.currency,

@@ -56,11 +56,12 @@ export default function KanbanCard({
   onInterestChange,
   interestFilter,
   restoreBadge,
+  isStatusMenuOpen,
+  onStatusMenuToggle,
 }) {
   const navigate = useNavigate();
   const [isDragging, setIsDragging] = useState(false);
   const [failedLogoUrl, setFailedLogoUrl] = useState(null);
-  const [statusMenuOpen, setStatusMenuOpen] = useState(false);
 
   const interestLevel = application.interest_level ?? 0;
   const isHidden = interestFilter > 0 && interestLevel < interestFilter;
@@ -82,7 +83,7 @@ export default function KanbanCard({
 
   function handleStatusChange(newStatus) {
     onStatusChange(application.id, newStatus);
-    setStatusMenuOpen(false);
+    onStatusMenuToggle(null);
   }
 
   const faviconUrl = getCompanyLogoUrl(application);
@@ -123,6 +124,7 @@ return (
       isHidden ? "kanban-card--hidden" : ""
     } ${isDragging ? "kanban-card--dragging" : ""} ${
       restoreBadge ? "kanban-card--has-restore-badge" : ""
+    } ${isStatusMenuOpen ? "kanban-card--status-open" : ""
     }`}
     style={{ "--accent": accentColor }}
     draggable
@@ -198,7 +200,7 @@ return (
         <button
           className="kanban-card__status-button"
           type="button"
-          onClick={() => setStatusMenuOpen((prev) => !prev)}
+          onClick={() => onStatusMenuToggle(application.id)}
         >
           <span>
             {COLUMNS.find((col) => col.id === application.status)?.label || "Status"}
@@ -206,7 +208,7 @@ return (
           <span>▾</span>
         </button>
 
-        {statusMenuOpen && (
+        {isStatusMenuOpen && (
           <div className="kanban-card__status-menu">
             {COLUMNS.map((col) => (
               <button
