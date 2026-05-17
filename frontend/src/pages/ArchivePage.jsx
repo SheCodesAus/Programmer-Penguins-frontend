@@ -90,7 +90,7 @@ export default function ArchivePage() {
           type="button"
           onClick={() => navigate("/dashboard")}
         >
-          ◀ Back to Kanban
+          ◀ Return to dashboard
         </button>
 
         <h1>Archived Applications</h1>

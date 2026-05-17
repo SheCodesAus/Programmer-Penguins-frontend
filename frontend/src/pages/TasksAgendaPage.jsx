@@ -473,7 +473,7 @@ export default function TasksAgendaPage() {
           type="button"
           onClick={() => navigate("/dashboard")}
         >
-          Back to Kanban
+          ◀ Return to dashboard
         </button>
 
         <div>
