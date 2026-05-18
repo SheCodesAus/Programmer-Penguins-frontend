@@ -5,6 +5,7 @@ import {
   restoreApplication,
 } from "../api/applications";
 import { apiFetch } from "../api/auth";
+import LoadingState from "../components/common/LoadingState";
 import { markApplicationRestored } from "../utils/restoredApplications";
 import "./ArchiveTrashPage.css";
 
@@ -40,8 +41,12 @@ export default function ArchivePage() {
   }
 
   useEffect(() => {
-    loadArchivedApplications();
-    loadProfile();
+    const timerId = window.setTimeout(() => {
+      loadArchivedApplications();
+      loadProfile();
+    }, 0);
+
+    return () => window.clearTimeout(timerId);
   }, []);
 
   async function handleAutoArchiveChange(event) {
@@ -90,7 +95,7 @@ export default function ArchivePage() {
           type="button"
           onClick={() => navigate("/dashboard")}
         >
-          ◀ Back to Kanban
+          ◀ Return to dashboard
         </button>
 
         <h1>Archived Applications</h1>
@@ -114,7 +119,7 @@ export default function ArchivePage() {
         )}
       </div>
 
-      {loading && <p className="archive-trash-page__message">Loading...</p>}
+      {loading && <LoadingState />}
       {error && <p className="archive-trash-page__error">{error}</p>}
 
       {!loading && applications.length === 0 && (
