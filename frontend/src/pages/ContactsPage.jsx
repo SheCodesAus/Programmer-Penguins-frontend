@@ -67,7 +67,7 @@ export default function ContactsPage() {
           type="button"
           onClick={() => navigate("/dashboard")}
         >
-          ◀ Back to Kanban
+          ◀ Return to dashboard
         </button>
 
         <div>

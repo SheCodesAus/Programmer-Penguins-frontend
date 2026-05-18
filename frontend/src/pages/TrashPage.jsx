@@ -61,7 +61,7 @@ export default function TrashPage() {
           type="button"
           onClick={() => navigate("/dashboard")}
         >
-          ◀ Back to Kanban
+          ◀ Return to dashboard
         </button>
 
         <h1>Deleted Applications</h1>
