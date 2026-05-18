@@ -27,6 +27,7 @@ import ContactsPage from "./pages/ContactsPage.jsx";
 import EditProfileModal from "./components/EditProfileModal.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import CalendarPage from "./pages/CalendarPage.jsx";
+import ResourcesPage from "./pages/ResourcesPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -92,6 +93,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ContactsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "resources",
+        element: (
+          <ProtectedRoute>
+            <ResourcesPage />
           </ProtectedRoute>
         ),
       },

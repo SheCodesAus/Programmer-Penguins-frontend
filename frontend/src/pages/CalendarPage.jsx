@@ -281,11 +281,8 @@ function buildEventLegendItems(visibleEvents) {
     return [...knownTypes, ...unknownVisibleTypes];
 }
 
-function buildTaskLegendItems(visibleTasks) {
-    const visibleGroups = new Set(visibleTasks.map(getTaskScheduleKey));
-
+function buildTaskLegendItems() {
     return TASK_SCHEDULE_ORDER
-        .filter(group => visibleGroups.has(group))
         .map(group => ({
             key: group,
             label: TASK_SCHEDULE_LABELS[group],
@@ -1168,7 +1165,7 @@ function CalendarPage() {
     const visibleEventsCount = visibleEvents.length;
     const visibleTasksCount = visibleTasks.length;
     const eventLegendItems = buildEventLegendItems(visibleEvents);
-    const taskLegendItems = buildTaskLegendItems(visibleTasks);
+    const taskLegendItems = buildTaskLegendItems();
 
     function handlePreviousPeriod() {
         setCurrentDate(prevDate => {
@@ -1491,18 +1488,14 @@ function CalendarPage() {
                                 <h3>Tasks by date</h3>
                                 <span>{visibleTasksCount}</span>
                             </div>
-                            {taskLegendItems.length > 0 ? (
-                                <div className="legend-group__items">
-                                    {taskLegendItems.map(item => (
-                                        <span key={item.key} className="legend-item legend-item--task">
-                                            <span className="legend-dot" style={{ background: item.colour }} />
-                                            {item.label}
-                                        </span>
-                                    ))}
-                                </div>
-                            ) : (
-                                <p className="legend-empty">No visible tasks</p>
-                            )}
+                            <div className="legend-group__items">
+                                {taskLegendItems.map(item => (
+                                    <span key={item.key} className="legend-item legend-item--task">
+                                        <span className="legend-dot" style={{ background: item.colour }} />
+                                        {item.label}
+                                    </span>
+                                ))}
+                            </div>
                         </section>
                     )}
                 </div>

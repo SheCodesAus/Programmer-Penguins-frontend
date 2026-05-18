@@ -85,6 +85,11 @@ function NavBar() {
             </NavLink>
           )}
           {isLoggedIn && (
+            <NavLink className="nav-link" to="/resources">
+              Resources
+            </NavLink>
+          )}
+          {isLoggedIn && (
             <NavLink className="nav-link" to={`/profile`}>
               My profile
             </NavLink>
@@ -138,6 +143,15 @@ function NavBar() {
             onClick={() => setMenuOpen(false)}
           >
             My Profile
+          </NavLink>
+        )}
+
+        {isLoggedIn && (
+          <NavLink
+            to="/resources"
+            onClick={() => setMenuOpen(false)}
+          >
+            Resources
           </NavLink>
         )}
 
