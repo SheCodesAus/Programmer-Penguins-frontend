@@ -30,7 +30,14 @@ function NavBar() {
           </NavLink>
         </div>
 
+
+
         <div className="nav-right">
+          {isLoggedIn && (
+            <NavLink className="nav-link" to="/calendar">
+              Calendar
+            </NavLink>
+          )}
           {isLoggedIn && (
             <NavLink className="nav-link" to="/dashboard">
               Dashboard

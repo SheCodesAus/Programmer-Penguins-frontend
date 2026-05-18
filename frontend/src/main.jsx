@@ -26,6 +26,7 @@ import TasksAgendaPage from "./pages/TasksAgendaPage.jsx";
 import ContactsPage from "./pages/ContactsPage.jsx";
 import EditProfileModal from "./components/EditProfileModal.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import CalendarPage from "./pages/CalendarPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <DashboardPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "calendar",
+        element: (
+          <ProtectedRoute>
+            <CalendarPage />
           </ProtectedRoute>
         ),
       },

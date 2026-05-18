@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { fetchApplicationContacts } from "../api/applications";
+import LoadingState from "../components/common/LoadingState";
 import "./ContactsPage.css";
 
 function getContactName(contact) {
@@ -86,7 +87,7 @@ export default function ContactsPage() {
         <span>{filteredContacts.length} contacts</span>
       </section>
 
-      {loading && <p className="contacts-page__message">Loading...</p>}
+      {loading && <LoadingState />}
       {error && <p className="contacts-page__error">{error}</p>}
 
       {!loading && filteredContacts.length === 0 && (

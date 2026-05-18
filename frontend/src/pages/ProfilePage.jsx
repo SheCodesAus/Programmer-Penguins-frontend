@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "../api/auth";
 import EditProfileModal from "../components/EditProfileModal";
+import LoadingState from "../components/common/LoadingState";
 import "./ProfilePage.css";
 
 function getInitials(firstName, lastName) {
@@ -26,7 +27,11 @@ export default function ProfilePage() {
   if (error)
     return <main className="profile-page__message">Error: {error}</main>;
   if (!profile)
-    return <main className="profile-page__message">Loading profile...</main>;
+    return (
+      <main className="profile-page">
+        <LoadingState />
+      </main>
+    );
 
   const initials = getInitials(profile.first_name, profile.last_name);
 

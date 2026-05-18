@@ -4,6 +4,7 @@ import {
   fetchDeletedApplications,
   restoreApplication,
 } from "../api/applications";
+import LoadingState from "../components/common/LoadingState";
 import { markApplicationRestored } from "../utils/restoredApplications";
 import "./ArchiveTrashPage.css";
 
@@ -29,7 +30,11 @@ export default function TrashPage() {
   }
 
   useEffect(() => {
-    loadDeletedApplications();
+    const timerId = window.setTimeout(() => {
+      loadDeletedApplications();
+    }, 0);
+
+    return () => window.clearTimeout(timerId);
   }, []);
 
   async function handleRestore(id) {
@@ -67,7 +72,7 @@ export default function TrashPage() {
         <h1>Deleted Applications</h1>
       </div>
 
-      {loading && <p className="archive-trash-page__message">Loading...</p>}
+      {loading && <LoadingState />}
       {error && <p className="archive-trash-page__error">{error}</p>}
 
       {!loading && applications.length === 0 && (

@@ -14,6 +14,7 @@ import {
   updateApplicationTask,
 } from "../api/applications";
 import ConfirmModal from "../components/common/ConfirmModal";
+import LoadingState from "../components/common/LoadingState";
 import EventScheduleFields from "../components/EventScheduleFields";
 import { toDateTimeLocalValue } from "../utils/dateTimeLocal";
 import { FaEdit } from "react-icons/fa";
@@ -496,7 +497,7 @@ export default function TasksAgendaPage() {
         )}
       </div>
 
-      {loading && <p className="tasks-agenda-page__message">Loading...</p>}
+      {loading && <LoadingState />}
       {error && <p className="tasks-agenda-page__error">{error}</p>}
 
       {!loading && (
