@@ -1,6 +1,6 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { CalendarDays, ChevronLeft, ChevronRight, Plus } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./CalendarPage.css";
 import {
     completeApplicationTask,
@@ -1060,6 +1060,7 @@ function TaskPopup({ task, onClose, onSaved, onDeleted }) {
 }
 
 function CalendarPage() {
+    const navigate = useNavigate();
     const [events, setEvents] = useState([]);
     const [tasks, setTasks] = useState([]);
     const [applications, setApplications] = useState([]);
@@ -1381,12 +1382,21 @@ function CalendarPage() {
     return (
         <main className="calendar-page">
             <header className="calendar-page__header">
-                <div>
-                    <span className="calendar-page__eyebrow">
-                        <CalendarDays size={16} />
-                        Schedule
-                    </span>
-                    <h1>Calendar</h1>
+                <button
+                    className="secondary-btn calendar-page__back"
+                    type="button"
+                    onClick={() => navigate("/dashboard")}
+                >
+                    ◀ Return to dashboard
+                </button>
+
+                <div className="calendar-page__title">
+                    <h1 className="calendar-page__heading">
+                        <span className="calendar-page__heading-icon" aria-hidden="true">
+                            <CalendarDays size={22} />
+                        </span>
+                        Calendar
+                    </h1>
                     <p>See interviews, follow-ups, deadlines, and application tasks by date.</p>
                 </div>
 
