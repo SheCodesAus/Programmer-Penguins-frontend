@@ -70,13 +70,13 @@ function NavBar() {
 
         <div className="nav-right">
           {isLoggedIn && (
-            <NavLink className="nav-link" to="/calendar">
-              Calendar
+            <NavLink className="nav-link" to="/dashboard">
+              Dashboard
             </NavLink>
           )}
           {isLoggedIn && (
-            <NavLink className="nav-link" to="/dashboard">
-              Dashboard
+            <NavLink className="nav-link" to="/calendar">
+              Calendar
             </NavLink>
           )}
           {isLoggedIn && (
@@ -127,6 +127,15 @@ function NavBar() {
         <NavLink to="/dashboard" onClick={() => setMenuOpen(false)}>
           Dashboard
         </NavLink>
+
+        {isLoggedIn && (
+          <NavLink
+            to="/calendar"
+            onClick={() => setMenuOpen(false)}
+          >
+            Calendar
+          </NavLink>
+        )}
 
         {isLoggedIn && (
           <NavLink
