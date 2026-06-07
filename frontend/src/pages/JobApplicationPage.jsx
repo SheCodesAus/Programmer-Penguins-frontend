@@ -17,6 +17,7 @@ import {
 import { getCompanyInitials, getCompanyLogoUrl } from "../utils/companyLogo";
 import EditApplicationModal from "../components/EditApplicationModal";
 import ConfirmModal from "../components/common/ConfirmModal";
+import LoadingState from "../components/common/LoadingState";
 import EventScheduleFields from "../components/EventScheduleFields";
 import { toDateTimeLocalValue } from "../utils/dateTimeLocal";
 import { FaEdit } from "react-icons/fa";
@@ -700,7 +701,7 @@ function JobApplicationPage() {
     const upcomingEvents = events.filter(event => new Date(event.starts_at) >= now);
     const pastEvents = events.filter(event => new Date(event.starts_at) < now);
 
-    if (isLoading) return <p className="loading">Loading...</p>;
+    if (isLoading) return <LoadingState />;
     if (error) return <p className="loading">Error: {error}</p>;
 
     return (

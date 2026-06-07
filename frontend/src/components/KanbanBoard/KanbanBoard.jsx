@@ -6,6 +6,7 @@ import MotivationToast from "../MotivationToast";
 import { getMotivationMessage } from "../../utils/motivationMessages";
 import { getRestoredApplicationBadges } from "../../utils/restoredApplications";
 import ConfirmModal from "../common/ConfirmModal";
+import LoadingState from "../common/LoadingState";
 import { deleteApplication, updateApplicationInterest } from "../../api/applications";
 import { ClipboardList, Filter } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -99,7 +100,7 @@ export default function KanbanBoard() {
   }
 
   if (loading) {
-    return <div className="kanban-board__loading">Loading your applications…</div>;
+    return <LoadingState />;
   }
 
   if (error) {

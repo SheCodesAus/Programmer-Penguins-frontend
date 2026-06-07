@@ -113,7 +113,14 @@ function formatPreview(dateTimeValue) {
   });
 }
 
-export default function EventScheduleFields({ startsAt, endsAt, onChange }) {
+export default function EventScheduleFields({
+  startsAt,
+  endsAt,
+  onChange,
+  title = "Schedule",
+  startLabel = "Start time",
+  showEndFields = true,
+}) {
   const dateValue = getDateValue(startsAt);
   const startTimeValue = getTimeValue(startsAt);
   const endTimeValue = getTimeValue(endsAt);
@@ -129,7 +136,9 @@ export default function EventScheduleFields({ startsAt, endsAt, onChange }) {
 
     onChange({
       starts_at: nextStartsAt,
-      ends_at: nextStartsAt ? addMinutes(nextStartsAt, durationMinutes) : "",
+      ...(showEndFields
+        ? { ends_at: nextStartsAt ? addMinutes(nextStartsAt, durationMinutes) : "" }
+        : {}),
     });
   }
 
@@ -169,7 +178,7 @@ export default function EventScheduleFields({ startsAt, endsAt, onChange }) {
   return (
     <div className="event-schedule">
       <div className="event-schedule__header">
-        <span className="event-schedule__title">Schedule</span>
+        <span className="event-schedule__title">{title}</span>
         <div className="event-schedule__quick-actions">
           <button
             type="button"
@@ -199,7 +208,7 @@ export default function EventScheduleFields({ startsAt, endsAt, onChange }) {
         </label>
 
         <label className="event-schedule__field">
-          <span>Start time</span>
+          <span>{startLabel}</span>
           <select
             value={startTimeValue}
             onChange={(event) => handleStartTimeChange(event.target.value)}
@@ -213,40 +222,44 @@ export default function EventScheduleFields({ startsAt, endsAt, onChange }) {
           </select>
         </label>
 
-        <label className="event-schedule__field">
-          <span>End time</span>
-          <select
-            value={endTimeValue}
-            onChange={(event) => handleEndTimeChange(event.target.value)}
-          >
-            <option value="">Choose time</option>
-            {TIME_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        {showEndFields && (
+          <>
+            <label className="event-schedule__field">
+              <span>End time</span>
+              <select
+                value={endTimeValue}
+                onChange={(event) => handleEndTimeChange(event.target.value)}
+              >
+                <option value="">Choose time</option>
+                {TIME_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-        <label className="event-schedule__field event-schedule__field--wide">
-          <span>Duration</span>
-          <select
-            value={durationOptionValue}
-            onChange={(event) => handleDurationChange(event.target.value)}
-          >
-            {DURATION_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
+            <label className="event-schedule__field event-schedule__field--wide">
+              <span>Duration</span>
+              <select
+                value={durationOptionValue}
+                onChange={(event) => handleDurationChange(event.target.value)}
+              >
+                {DURATION_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </>
+        )}
       </div>
 
       {startsAt && (
         <div className="event-schedule__preview">
           {formatPreview(startsAt)}
-          {endsAt ? ` - ${formatPreview(endsAt)}` : ""}
+          {showEndFields && endsAt ? ` - ${formatPreview(endsAt)}` : ""}
         </div>
       )}
     </div>
